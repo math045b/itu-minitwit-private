@@ -7,3 +7,9 @@ Co-authored-by: Christoffer \<gryn@itu.dk>\
 Co-authored-by: Jacques \<japu@itu.dk>\
 Co-authored-by: Rasmus \<rarl@itu.dk>\
 Co-authored-by: Mathias \<mlao@itu.dk>
+
+## Issue Template
+As a _, I want to _ in order to _
+
+## Branch named
+All lowercap with - fx update-readme
