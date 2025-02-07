@@ -9,7 +9,15 @@ Co-authored-by: Rasmus \<rarl@itu.dk>\
 Co-authored-by: Mathias \<mlao@itu.dk>
 
 ## Issue Template
-As a _, I want to _ in order to _
+### Title
+As a \<who>, I want to \<What>, in order to \<Why>
+
+### Description
+\## Acceptance criteria\
+\- [ ] Criteria1\
+\- [ ] Criteria2
+
+\Timespent Xh Ym
 
 ## Branch named
 All lowercap with - fx update-readme
