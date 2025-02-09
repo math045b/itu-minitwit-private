@@ -1,0 +1,10 @@
+-- register.html --
+<h2>Sign Up</h2>
+{% if error %}<div class="error"><strong>Error:</strong> {{ error }}</div>{% endif %}
+<form action="/register" method="post">
+    <label>Username:</label> <input type="text" name="username" value="{{ request.form.username }}"><br>
+    <label>Email:</label> <input type="text" name="email" value="{{ request.form.email }}"><br>
+    <label>Password:</label> <input type="password" name="password"><br>
+    <label>Repeat Password:</label> <input type="password" name="password2"><br>
+    <input type="submit" value="Sign Up">
+</form>

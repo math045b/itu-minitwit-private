@@ -1,0 +1,38 @@
+<!doctype html>
+<title>{{ title }} | MiniTwit</title>
+
+<!-- Example usage of a 'static_url' helper function 
+     that you pass from C# to Scriban -->
+<link rel="stylesheet" type="text/css" href="{{ static_url "style.css" }}">
+
+<div class="page">
+  <h1>MiniTwit</h1>
+
+  <div class="navigation">
+    {{ if user }}
+      <a href="{{ url "timeline" }}">my timeline</a> |
+      <a href="{{ url "public_timeline" }}">public timeline</a> |
+      <a href="{{ url "logout" }}">sign out [{{ user.username }}]</a>
+    {{ else }}
+      <a href="{{ url "public_timeline" }}">public timeline</a> |
+      <a href="{{ url "register" }}">sign up</a> |
+      <a href="{{ url "login" }}">sign in</a>
+    {{ end }}
+  </div>
+
+  {{ if flashes && flashes.size > 0 }}
+    <ul class="flashes">
+      {{ for message in flashes }}
+        <li>{{ message }}</li>
+      {{ end }}
+    </ul>
+  {{ end }}
+
+  <div class="body">
+    {{ body }}
+  </div>
+
+  <div class="footer">
+    MiniTwit &mdash; A Flask Application
+  </div>
+</div>
