@@ -1,7 +1,9 @@
-@page
+@page "/"
 @model itu_minitwit.Pages.TimelineModel
 @{
     ViewData["Title"] = Model.PageTitle;
+    Layout = "Shared/_Layout";
+
 }
 
 <h2>@Model.PageTitle</h2>
