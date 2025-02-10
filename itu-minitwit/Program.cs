@@ -75,5 +75,25 @@ app.MapPost("/{whomUsername}/follow", (HttpContext context, string whomUsername,
     return Results.Redirect($"/{whomUsername}");
 });
 
+app.MapPost("/{whomUsername}/unfollow", (HttpContext context, string whomUsername, MiniTwitDbContext db) =>
+{
+    var whoUsername = context.Session.GetString("User");
+    
+    var who = db.Users.FirstOrDefault(u => u.Username == whoUsername);
+    var whom = db.Users.FirstOrDefault(u => u.Username == whomUsername);
+    
+    if (who == null && whom == null) return Results.BadRequest("Invalid users.");
+    
+    var followRelation = db.Followers.FirstOrDefault(f => f.WhoId == who!.UserId && f.WhomId == whom!.UserId);
+    
+    if (followRelation == null) return Results.BadRequest("You dont follow that user");
+
+    db.Followers.Remove(followRelation);
+    db.SaveChanges();
+    
+    return Results.Redirect($"/{whomUsername}");
+});
+
+
 app.Run();
 
