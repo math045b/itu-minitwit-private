@@ -14,7 +14,10 @@ using itu_minitwit.Data;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MiniTwitDbContext>(options =>
     options.UseSqlite("Data Source=minitwit.db"));
-var app = builder.Build();
+
+builder.Services.AddRazorPages();
+
+var app = builder.Build();  
 
 app.UseStaticFiles();
 app.UseRouting();
