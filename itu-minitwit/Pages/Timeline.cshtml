@@ -3,13 +3,14 @@
 @{
     ViewData["Title"] = Model.PageTitle;
     Layout = "Shared/_Layout";
+    var author = HttpContext.GetRouteValue("author") ?? "";
 }
 
 <h2>@Model.PageTitle</h2>
 
-@if (Model.IsUserLoggedIn)
+@if (Model.IsUserLoggedIn && !author.Equals("public"))
 {
-    if (HttpContext.GetRouteValue("author")!.Equals("Timeline"))
+    if (author.Equals("Timeline"))
     {
         <div class="twitbox">
             <h3>What's on your mind @Model.Username?</h3>
@@ -18,6 +19,33 @@
                 <p><input type="text" name="Message" size="60">
                     <input type="submit" value="Share">
             </form>
+        </div>
+    }
+    else
+    {
+        <div class=followstatus>
+            @if (author.Equals(Model.Username))
+            {
+                <p>This is you!</p>
+            }
+            else if (Model.Follows)
+            {
+                <p>
+                    You are currently following this user.
+                    <a class=unfollow href="/@author/unfollow" 
+                       onclick="document.getElementById('unfollowForm').submit(); return false;">Unfollow user</a>
+                </p>
+                
+                <form id="unfollowForm" method="post" action="/@author/unfollow" style="display:none;"></form>
+            }
+            else
+            {
+                <p>You are not yet following this user.
+                <a class=follow href="/@author/follow"
+                   onclick="document.getElementById('followForm').submit(); return false;">Follow user</a>
+                </p>
+                <form id="followForm" method="post" action="/@author/follow" style="display:none;"></form>
+            }
         </div>
     }
 }
