@@ -1,0 +1,54 @@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var user = HttpContextAccessor.HttpContext.Session.GetString("User");
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] | MiniTwit</title>
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" />
+</head>
+<body>
+<div class="page">
+    <h1>MiniTwit</h1>
+    <div class="navigation">
+        @if (!string.IsNullOrEmpty(user))
+        {
+            <div>
+                <a href="/Timeline">My Timeline</a> |
+                <a href="/PublicTimeline">Public Timeline</a> |
+                <a href="/Logout">Sign out [@user]</a>
+            </div>
+        }
+        else
+        {
+            <div>
+                <a href="/PublicTimeline">Public Timeline</a> |
+                <a href="/Register">Sign Up</a> |
+                <a href="/Login">Sign In</a>
+            </div>
+        }
+    </div>
+
+    @if (TempData["FlashMessages"] != null)
+    {
+        <ul class="flashes">
+            @foreach (var message in (List<string>)TempData["FlashMessages"])
+            {
+                <li>@message</li>
+            }
+        </ul>
+    }
+
+    <div class="body">
+        @RenderBody()
+    </div>
+
+    <div class="footer">
+        MiniTwit &mdash; An ASP.NET Core Application
+    </div>
+</div>
+</body>
+</html>
