@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-public class RegisterModel(MiniTwitDbContext db, IPasswordHasher<string> passwordHasher) : PageModel
+public class RegisterModel(MiniTwitDbContext db, IPasswordHasher<User> passwordHasher) : PageModel
 {
     [BindProperty] public string Username { get; set; }
     [BindProperty] public string Email { get; set; }
@@ -23,8 +23,9 @@ public class RegisterModel(MiniTwitDbContext db, IPasswordHasher<string> passwor
         {
             Username = Username,
             Email = Email,
-            PwHash = passwordHasher.HashPassword(Username, Password)
+            
         };
+        user.PwHash = passwordHasher.HashPassword(user, Password);
         
         db.Users.Add(user);
         db.SaveChanges();
