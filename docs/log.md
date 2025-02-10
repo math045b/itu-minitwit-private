@@ -1,0 +1,14 @@
+# Logbook - Devops group A 
+
+## Meeting 07/02/25 
+
+Group worked on converting minitwit.py into a simple c# program using scriban templates. And worked on the Docker exercises for the week
+
+## Meeting 09/02/25 
+
+After the work during the last meeting the group encountered issues with loading the users in the simple c# project. Because of this it was decided to convert it to a dotnet project using efcore to handle the users. 
+
+The group still had issus loading the scriban template files having issues getting the template files to be rendered as html in browser instead of text files.
+
+## Meeting 10/02/25
+After the issues the previous meeting the group decided to migrate the simple c# solution into a dotnet web application using razor pages to handle the UI elements. 
