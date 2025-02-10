@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using itu_minitwit.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -27,6 +29,7 @@ builder.Services.AddDbContext<MiniTwitDbContext>(options =>
     options.UseSqlite("Data Source=minitwit.db"));
 
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -94,12 +97,7 @@ app.MapPost("/{whomUsername}/unfollow", (HttpContext context, string whomUsernam
     return Results.Redirect($"/{whomUsername}");
 });
 
-app.MapGet("/logout", (HttpContext context) =>
-{
-    context.Session.Clear();
-    return Results.Redirect("/");
-});
-
+app.MapControllers();
 
 app.Run();
 
