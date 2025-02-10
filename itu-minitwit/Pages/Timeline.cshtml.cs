@@ -2,6 +2,7 @@ using itu_minitwit.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
+
 namespace itu_minitwit.Pages;
 
 public class TimelineModel(MiniTwitDbContext db) : PageModel
@@ -14,8 +15,41 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
     public void OnGet()
     {
-        Messages = db.Messages
+        if (HttpContext.GetRouteValue("author")!.Equals("public"))
+        {
+            Messages = GetMessages();
+        }
+        else
+        {
+            Messages = GetUserMessages(HttpContext.GetRouteValue("author")!.ToString()!);
+        }
+        
+    }
+
+    public List<MessageModel> GetMessages()
+    {
+        return db.Messages
             .Where(m => m.Flagged == 0)
+            .OrderByDescending(m => m.PubDate)
+            .Take(30)
+            .Select(m => new MessageModel
+            {
+                Text = m.Text,
+                PublishedAt = DateTimeOffset.FromUnixTimeSeconds((long)  m.PubDate!).DateTime,
+                Username = db.Users
+                    .Where(u => u.UserId == m.AuthorId)
+                    .Select(u => u.Username)
+                    .First()
+            })
+            .ToList();
+    }
+
+    public List<MessageModel> GetUserMessages(string author)
+    {
+        var author_id = db.Users.Where(u => u.Username == author).Select(u => u.UserId).FirstOrDefault();
+        return db.Messages
+            .Where(m => m.Flagged == 0)
+            .Where(m => m.AuthorId == author_id)
             .OrderByDescending(m => m.PubDate)
             .Take(30)
             .Select(m => new MessageModel

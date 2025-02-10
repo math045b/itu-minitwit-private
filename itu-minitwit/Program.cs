@@ -37,7 +37,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/public");
+        return;
+    }
+    await next();
+});
 
 app.MapRazorPages();
 
