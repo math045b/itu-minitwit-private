@@ -13,7 +13,6 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
     public string PageTitle { get; set; } = "My Timeline";
     public bool IsUserLoggedIn => HttpContext.Session.GetString("User") != null;
     public string Username => HttpContext.Session.GetString("User") ?? "Guest";
-    public bool IsViewingOwnTimeline => true; // Adjust logic as needed
     public List<MessageModel> Messages { get; set; } = new List<MessageModel>();
 
     public void OnGet()
@@ -62,6 +61,11 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
     public List<MessageModel> GetUserMessages(string author)
     {
+        if (author == "Timeline")
+        {
+            author = Username;
+        }
+        
         var author_id = db.Users.Where(u => u.Username == author).Select(u => u.UserId).FirstOrDefault();
         
         var messages = db.Messages
@@ -108,7 +112,7 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
                
         }
 
-        Data.Message message = new Message
+        var message = new Message
         {
             AuthorId = db.Users.FirstOrDefault(c => c.Username == Username).UserId,
             Flagged = 0,
