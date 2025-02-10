@@ -14,10 +14,23 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
     public void OnGet()
     {
-        Messages = new List<MessageModel>
-        {
-            new MessageModel { Username = "john_doe", Text = "Hello World!", EmailGravatarUrl = "https://www.gravatar.com/avatar/...", PublishedAt = DateTime.Now }
-        };
+        var messages = db.Messages
+            .Where(m => m.Flagged == 0)
+            .OrderByDescending(m => m.PubDate)
+            .Take(30)
+            .Select(m => new MessageModel
+            {
+                Username = db.Users
+                    .Where(u => u.UserId == m.AuthorId)
+                    .Select(u => u.Username)
+                    .FirstOrDefault(),
+                Text = m.Text,
+                //PublishedAt = m.PubDate, // Handle nulls in PubDate
+                EmailGravatarUrl = "some-url-based-on-email" // Add logic for Gravatar URL if needed
+            })
+            .ToList();
+
+        Messages = messages;
     }
 
     public IActionResult OnPost(string text)
