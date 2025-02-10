@@ -29,7 +29,7 @@ public class LoginModel (MiniTwitDbContext db, IPasswordHasher<User> passwordHas
         }
         
         HttpContext.Session.SetString("User", Username);
-        return RedirectToPage("/Timeline");
+        return LocalRedirect("~/");
             
     }
 }
