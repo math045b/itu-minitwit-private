@@ -2,6 +2,7 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Sign Up";
+    Layout = "Shared/_Layout";
 }
 
 <h2>Sign Up</h2>
@@ -12,6 +13,7 @@
 }
 
 <form method="post">
+    @Html.AntiForgeryToken()
     <dl>
         <dt>Username:</dt>
         <dd><input type="text" name="Username" value="@Model.Username" size="30"></dd>
