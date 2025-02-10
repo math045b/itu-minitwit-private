@@ -1,7 +1,9 @@
+using itu_minitwit.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-public class RegisterModel : PageModel
+public class RegisterModel(MiniTwitDbContext db, IPasswordHasher<User> passwordHasher) : PageModel
 {
     [BindProperty] public string Username { get; set; }
     [BindProperty] public string Email { get; set; }
@@ -17,6 +19,17 @@ public class RegisterModel : PageModel
             return;
         }
 
+        User user = new User
+        {
+            Username = Username,
+            Email = Email,
+            
+        };
+        user.PwHash = passwordHasher.HashPassword(user, Password);
+        
+        db.Users.Add(user);
+        db.SaveChanges();
+        
         TempData["FlashMessages"] = new List<string> { "Registration successful!" };
         Response.Redirect("/Login");
     }

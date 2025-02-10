@@ -10,10 +10,12 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using itu_minitwit.Data;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddSession(options =>
 {
@@ -25,7 +27,6 @@ builder.Services.AddDbContext<MiniTwitDbContext>(options =>
     options.UseSqlite("Data Source=minitwit.db"));
 
 builder.Services.AddRazorPages();
-
 
 var app = builder.Build();
 
