@@ -50,6 +50,30 @@ app.Use(async (context, next) =>
 
 app.MapRazorPages();
 
+app.MapPost("/{whomUsername}/follow", (HttpContext context, string whomUsername, MiniTwitDbContext db) =>
+{
+    var whoUsername = context.Session.GetString("User");
+    
+    var who = db.Users.FirstOrDefault(u => u.Username == whoUsername);
+    var whom = db.Users.FirstOrDefault(u => u.Username == whomUsername);
+    
+    if (who == null && whom == null) return Results.BadRequest("Invalid users.");
+    
+    var followRelation = db.Followers.FirstOrDefault(f => f.WhoId == who!.UserId && f.WhomId == whom!.UserId);
+    
+    if (followRelation != null) return Results.BadRequest("You already follow that user");
+
+    followRelation = new Follower
+    {
+        WhoId = who!.UserId,
+        WhomId = whom!.UserId
+    };
+
+    db.Followers.Add(followRelation);
+    db.SaveChanges();
+    
+    return Results.Redirect($"/{whomUsername}");
+});
 
 app.Run();
 
