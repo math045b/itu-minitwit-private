@@ -14,10 +14,20 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
     public void OnGet()
     {
-        Messages = new List<MessageModel>
-        {
-            new MessageModel { Username = "john_doe", Text = "Hello World!", EmailGravatarUrl = "https://www.gravatar.com/avatar/...", PublishedAt = DateTime.Now }
-        };
+        Messages = db.Messages
+            .Where(m => m.Flagged == 0)
+            .OrderByDescending(m => m.PubDate)
+            .Take(30)
+            .Select(m => new MessageModel
+            {
+                Text = m.Text,
+                PublishedAt = DateTimeOffset.FromUnixTimeSeconds((long)  m.PubDate!).DateTime,
+                Username = db.Users
+                    .Where(u => u.UserId == m.AuthorId)
+                    .Select(u => u.Username)
+                    .First()
+            })
+            .ToList();
     }
 
     public IActionResult OnPost(string text)
@@ -34,6 +44,6 @@ public class MessageModel
 {
     public string Username { get; set; }
     public string Text { get; set; }
-    public string EmailGravatarUrl { get; set; }
+    //public string EmailGravatarUrl { get; set; }
     public DateTime PublishedAt { get; set; }
 }

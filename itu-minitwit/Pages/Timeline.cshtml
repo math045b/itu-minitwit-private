@@ -25,7 +25,7 @@
     {
         @foreach (var message in Model.Messages)
         {
-            <li><img src="@message.EmailGravatarUrl" />
+            <li>@* <img src="@message.EmailGravatarUrl" /> *@
                 <p><strong><a href="/UserTimeline?username=@message.Username">@message.Username</a></strong>
                     @message.Text
                     <small>&mdash; @message.PublishedAt.ToString("g")</small>
