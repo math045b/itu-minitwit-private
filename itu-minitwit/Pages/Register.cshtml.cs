@@ -2,6 +2,7 @@ using itu_minitwit.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 public class RegisterModel(MiniTwitDbContext db, IPasswordHasher<User> passwordHasher) : PageModel
 {
@@ -11,12 +12,12 @@ public class RegisterModel(MiniTwitDbContext db, IPasswordHasher<User> passwordH
     [BindProperty] public string ConfirmPassword { get; set; }
     public string ErrorMessage { get; set; }
 
-    public void OnPost()
+    public IActionResult OnPost()
     {
         if (Password != ConfirmPassword)
         {
             ErrorMessage = "Passwords do not match.";
-            return;
+            return Page();
         }
 
         User user = new User
@@ -30,7 +31,8 @@ public class RegisterModel(MiniTwitDbContext db, IPasswordHasher<User> passwordH
         db.Users.Add(user);
         db.SaveChanges();
         
-        TempData["FlashMessages"] = new List<string> { "Registration successful!" };
-        Response.Redirect("/Login");
+        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "You were successfully registered and can login now" });
+        
+        return RedirectToPage("Login");
     }
 }

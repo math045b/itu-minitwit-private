@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var user = HttpContextAccessor.HttpContext.Session.GetString("User");
@@ -32,16 +33,16 @@
         }
     </div>
 
-    @if (TempData["FlashMessages"] != null)
+    @if (TempData["FlashMessages"] is string flashMessagesJson)
     {
-        @* var messages = TempData["FlashMessages"] as List<string>; *@
-        @* *@
-        @* <ul class="flashes"> *@
-        @*     @foreach (var message in messages!) *@
-        @*     { *@
-        @*         <li>@message</li> *@
-        @*     } *@
-        @* </ul> *@
+        var messages = JsonConvert.DeserializeObject<List<string>>(flashMessagesJson) ?? new List<string>();
+        
+        <ul class="flashes">
+            @foreach (var message in messages!)
+            {
+                <li>@message</li>
+            }
+        </ul>
     }
 
     <div class="body">

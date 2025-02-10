@@ -13,6 +13,7 @@ public class LogoutController(MiniTwitDbContext db) : Controller
     {
         HttpContext.Session.Clear();
         
+        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "You were logged out" });
     
         return Redirect("/");
     }

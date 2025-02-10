@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
 public class LoginModel (MiniTwitDbContext db, IPasswordHasher<User> passwordHasher) : PageModel
 {
@@ -27,9 +28,11 @@ public class LoginModel (MiniTwitDbContext db, IPasswordHasher<User> passwordHas
             ErrorMessage = "Invalid credentials.";
             return Page();
         }
+
+        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "You were logged in" });
         
         HttpContext.Session.SetString("User", Username);
-        return LocalRedirect("~/");
+        return LocalRedirect("~/public");
             
     }
 }

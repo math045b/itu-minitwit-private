@@ -31,6 +31,7 @@ public class FollowController(MiniTwitDbContext db) : Controller
         db.Followers.Add(followRelation);
         db.SaveChanges();
         
+        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { $"You are now following \"{whomUsername}\"" });
     
         return Redirect($"/{whomUsername}");
     }
@@ -52,6 +53,7 @@ public class FollowController(MiniTwitDbContext db) : Controller
         db.Followers.Remove(followRelation);
         db.SaveChanges();
         
+        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { $"You are no longer following \"{whomUsername}\"" });
     
         return Redirect($"/{whomUsername}");
     }

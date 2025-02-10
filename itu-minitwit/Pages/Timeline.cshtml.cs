@@ -3,6 +3,7 @@ using System.Text;
 using itu_minitwit.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 
 namespace itu_minitwit.Pages;
@@ -140,6 +141,8 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
         db.Messages.Add(message);
         db.SaveChanges();
+        
+        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "Your message was recorded" });
 
         return RedirectToPage();
     }
