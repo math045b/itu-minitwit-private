@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = Model.PageTitle;
     Layout = "Shared/_Layout";
-
 }
 
 <h2>@Model.PageTitle</h2>
@@ -15,8 +14,9 @@
         <div class="twitbox">
             <h3>What's on your mind @Model.Username?</h3>
             <form method="post">
-                <p><input type="text" name="Text" size="60">
-                <input type="submit" value="Share">
+                @Html.AntiForgeryToken()
+                <p><input type="text" name="Message" size="60">
+                    <input type="submit" value="Share">
             </form>
         </div>
     }
@@ -28,7 +28,7 @@
         @foreach (var message in Model.Messages)
         {
             <li>
-                <img src="@message.EmailGravatarUrl" alt="@message.Username's avatar" />
+                <img src="@message.EmailGravatarUrl" alt="@message.Username's avatar"/>
                 <p><strong><a href="/@message.Username">@message.Username</a></strong>
                     @message.Text
                     <small>&mdash; @message.PublishedAt.ToString("g")</small>
