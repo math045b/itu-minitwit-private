@@ -94,6 +94,12 @@ app.MapPost("/{whomUsername}/unfollow", (HttpContext context, string whomUsernam
     return Results.Redirect($"/{whomUsername}");
 });
 
+app.MapGet("/logout", (HttpContext context) =>
+{
+    context.Session.Clear();
+    return Results.Redirect("/");
+});
+
 
 app.Run();
 
