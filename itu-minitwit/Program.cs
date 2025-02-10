@@ -26,11 +26,8 @@ builder.Services.AddDbContext<MiniTwitDbContext>(options =>
 
 builder.Services.AddRazorPages();
 
-<<<<<<< Updated upstream
-var app = builder.Build();  
-=======
+
 var app = builder.Build();
->>>>>>> Stashed changes
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
