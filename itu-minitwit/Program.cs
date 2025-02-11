@@ -43,12 +43,25 @@ app.UseAuthorization();
 
 app.Use(async (context, next) =>
 {
-    if (context.Request.Path == "/")
+    if (context.Session.GetString("User") != null)
     {
-        context.Response.Redirect("/public");
-        return;
+        if (context.Request.Path == "/")
+        {
+            context.Response.Redirect("/Timeline");
+            return;
+        }
+        await next();
     }
-    await next();
+    else
+    {
+        if (context.Request.Path == "/")
+        {
+            context.Response.Redirect("/public");
+            return;
+        }
+        await next();  
+    }
+    
 });
 
 app.MapRazorPages();
