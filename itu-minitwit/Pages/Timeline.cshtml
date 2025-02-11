@@ -14,12 +14,13 @@
     {
         <div class="twitbox">
             <h3>What's on your mind @Model.Username?</h3>
-            <form method="post">
+            <form method="post" action="/add_message">
                 @Html.AntiForgeryToken()
-                <p><input type="text" name="Message" size="60">
+                <p><input type="text" name="text" size="60">
                     <input type="submit" value="Share">
             </form>
         </div>
+
     }
     else
     {
@@ -38,7 +39,7 @@
                     </a>
                 </p>
                 
-                <form id="unfollowForm" method="post" action="/@author/unfollow" style="display:none;"></form>
+                <form id="unfollowForm" method="get" action="/@author/unfollow" style="display:none;"></form>
             }
             else
             {
@@ -48,7 +49,7 @@
                         Follow user
                     </a>
                 </p>
-                <form id="followForm" method="post" action="/@author/follow" style="display:none;"></form>
+                <form id="followForm" method="get" action="/@author/follow" style="display:none;"></form>
             }
         </div>
     }
