@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
-
+[IgnoreAntiforgeryToken]
 public class LoginModel (MiniTwitDbContext db, IPasswordHasher<User> passwordHasher) : PageModel
 {
     [BindProperty] public string Username { get; set; }
@@ -18,14 +18,14 @@ public class LoginModel (MiniTwitDbContext db, IPasswordHasher<User> passwordHas
 
         if (user == null)
         {
-            ErrorMessage = "Invalid credentials.";
+            ErrorMessage = "Invalid username";
             return Page();
         }
         
         var result = passwordHasher.VerifyHashedPassword(user, user.PwHash, Password);
         if (result == PasswordVerificationResult.Failed)
         {
-            ErrorMessage = "Invalid credentials.";
+            ErrorMessage = "Invalid password";
             return Page();
         }
 
