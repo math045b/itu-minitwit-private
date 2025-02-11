@@ -55,7 +55,7 @@ public partial class MiniTwitDbContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.ToTable("user");
-
+                entity.HasIndex(e => e.Username).IsUnique();
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Email)
                 .HasColumnType("string")
@@ -66,6 +66,7 @@ public partial class MiniTwitDbContext : DbContext
             entity.Property(e => e.Username)
                 .HasColumnType("string")
                 .HasColumnName("username");
+                
         });
 
         OnModelCreatingPartial(modelBuilder);
