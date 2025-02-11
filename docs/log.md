@@ -12,3 +12,5 @@ The group still had issus loading the scriban template files having issues getti
 
 ## Meeting 10/02/25
 After the issues the previous meeting the group decided to migrate the simple c# solution into a dotnet web application using razor pages to handle the UI elements. 
+
+Group worked with converting the application to razor pages. In order to keep the project structure simple, for now we opted to forgo the repositiory pattern and just keep the LINQ statements within the razor-page-models
