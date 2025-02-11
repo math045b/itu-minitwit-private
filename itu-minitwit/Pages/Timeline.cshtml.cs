@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 
 namespace itu_minitwit.Pages;
-
+[IgnoreAntiforgeryToken]
 public class TimelineModel(MiniTwitDbContext db) : PageModel
 {
     [BindProperty] public string Message { get; set; }
@@ -66,43 +66,70 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
     }
 
     public List<MessageModel> GetUserMessages(string author)
+{
+    // Get the ID of the user
+    int author_id = db.Users
+        .Where(u => u.Username == author)
+        .Select(u => u.UserId)
+        .FirstOrDefault();
+
+    if (author == "Timeline")
     {
-        if (author == "Timeline")
-        {
-            author = Username;
-        }
+        author = Username; // Ensure we use the logged-in user's username
+        author_id = db.Users
+            .Where(u => u.Username == author)
+            .Select(u => u.UserId)
+            .FirstOrDefault();
 
-        var author_id = db.Users.Where(u => u.Username == author).Select(u => u.UserId).FirstOrDefault();
+        // Get the list of followed user IDs
+        var followedUserIds = db.Followers
+            .Where(f => f.WhoId == author_id)
+            .Select(f => f.WhomId)
+            .ToList();
 
+        // Get messages from the logged-in user and the followed users
         var messages = db.Messages
-            .Where(m => m.Flagged == 0)
-            .Where(m => m.AuthorId == author_id)
+            .Where(m => m.Flagged == 0 && 
+                        (m.AuthorId == author_id || followedUserIds.Contains(m.AuthorId)))
             .OrderByDescending(m => m.PubDate)
             .Take(30)
-            .Select(m => new
-            {
-                m.Text,
-                m.PubDate,
-                m.AuthorId
-            })
-            .ToList();
+            .ToList(); // Using ToList() to fetch the result into a List<Message>
 
-        return messages.Select(m => new MessageModel
-            {
-                Text = m.Text,
-                PublishedAt = DateTimeOffset.FromUnixTimeSeconds((long)m.PubDate!).DateTime,
-                Username = db.Users
-                    .Where(u => u.UserId == m.AuthorId)
-                    .Select(u => u.Username)
-                    .First(),
-                EmailGravatarUrl = GetGravatarUrl(
-                    db.Users
-                        .Where(u => u.UserId == m.AuthorId)
-                        .Select(u => u.Email)
-                        .First())
-            })
-            .ToList();
+        return MapMessages(messages);
     }
+    else
+    {
+        // Show ONLY the specified author's messages
+        var messages = db.Messages
+            .Where(m => m.Flagged == 0 && m.AuthorId == author_id)
+            .OrderByDescending(m => m.PubDate)
+            .Take(30)
+            .ToList(); // Using ToList() to fetch the result into a List<Message>
+
+        return MapMessages(messages);
+    }
+}
+
+// Helper function to map messages to MessageModel
+private List<MessageModel> MapMessages(List<Message> messages)
+{
+    return messages.Select(m => new MessageModel
+        {
+            Text = m.Text,
+            PublishedAt = DateTimeOffset.FromUnixTimeSeconds((long)m.PubDate!).DateTime,
+            Username = db.Users
+                .Where(u => u.UserId == m.AuthorId)
+                .Select(u => u.Username)
+                .First(),
+            EmailGravatarUrl = GetGravatarUrl(
+                db.Users
+                    .Where(u => u.UserId == m.AuthorId)
+                    .Select(u => u.Email)
+                    .First())
+        })
+        .ToList();
+}
+
 
     public bool DoesFollow(string whomUsername)
     {
@@ -123,8 +150,8 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
         var hash = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(email.Trim().ToLower()));
         var hashString = string.Concat(hash.Select(b => b.ToString("x2")));
         return $"https://www.gravatar.com/avatar/{hashString}?d=identicon&s={size}";
-    }
-
+    }  
+    /*
     public IActionResult OnPost()
     {
         if (string.IsNullOrWhiteSpace(Message))
@@ -145,7 +172,7 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
         TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "Your message was recorded" });
 
         return RedirectToPage();
-    }
+    }*/
 }
 
 public class MessageModel
