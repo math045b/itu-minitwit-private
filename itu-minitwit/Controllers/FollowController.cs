@@ -5,10 +5,11 @@ using Newtonsoft.Json;
 
 namespace itu_minitwit.Controllers;
 
-[Route("[controller]")]
+[Route("/")]
 public class FollowController(MiniTwitDbContext db) : Controller
 {
-    [HttpPost("/{whomUsername}/follow")]
+    [IgnoreAntiforgeryToken]
+    [HttpGet("/{whomUsername}/follow")]
     public IActionResult FollowUser(string whomUsername)
     {
         var whoUsername = HttpContext.Session.GetString("User");
@@ -36,7 +37,7 @@ public class FollowController(MiniTwitDbContext db) : Controller
         return Redirect($"/{whomUsername}");
     }
 
-    [HttpPost("/{whomUsername}/unfollow")]
+    [HttpGet("/{whomUsername}/unfollow")]
     public IActionResult UnfollowUser(string whomUsername)
     {
         var whoUsername = HttpContext.Session.GetString("User");
