@@ -150,29 +150,7 @@ private List<MessageModel> MapMessages(List<Message> messages)
         var hash = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(email.Trim().ToLower()));
         var hashString = string.Concat(hash.Select(b => b.ToString("x2")));
         return $"https://www.gravatar.com/avatar/{hashString}?d=identicon&s={size}";
-    }  
-    /*
-    public IActionResult OnPost()
-    {
-        if (string.IsNullOrWhiteSpace(Message))
-        {
-        }
-
-        var message = new Message
-        {
-            AuthorId = db.Users.FirstOrDefault(c => c.Username == Username).UserId,
-            Flagged = 0,
-            PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds(),
-            Text = Message,
-        };
-
-        db.Messages.Add(message);
-        db.SaveChanges();
-        
-        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "Your message was recorded" });
-
-        return RedirectToPage();
-    }*/
+    }
 }
 
 public class MessageModel
