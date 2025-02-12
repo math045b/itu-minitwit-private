@@ -5,7 +5,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		compose.yaml = compose.yaml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "itu-minitwit", "minitwit.web\itu-minitwit.csproj", "{907AF100-2365-4A46-ADBE-75FD0BCE3397}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.web", "minitwit.web\minitwit.web.csproj", "{4B81108E-E434-4A79-AD3D-876CA3287951}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.test", "minitwit.test\minitwit.test.csproj", "{A70C3091-82A0-4B68-B499-1032621A1A92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,9 +15,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{907AF100-2365-4A46-ADBE-75FD0BCE3397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{907AF100-2365-4A46-ADBE-75FD0BCE3397}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{907AF100-2365-4A46-ADBE-75FD0BCE3397}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{907AF100-2365-4A46-ADBE-75FD0BCE3397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B81108E-E434-4A79-AD3D-876CA3287951}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B81108E-E434-4A79-AD3D-876CA3287951}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B81108E-E434-4A79-AD3D-876CA3287951}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B81108E-E434-4A79-AD3D-876CA3287951}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A70C3091-82A0-4B68-B499-1032621A1A92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A70C3091-82A0-4B68-B499-1032621A1A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A70C3091-82A0-4B68-B499-1032621A1A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A70C3091-82A0-4B68-B499-1032621A1A92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
