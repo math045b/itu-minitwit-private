@@ -1,0 +1,57 @@
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var user = HttpContextAccessor.HttpContext.Session.GetString("User");
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] | MiniTwit</title>
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true" />
+</head>
+<body>
+<div class="page">
+    <h1>MiniTwit</h1>
+    <div class="navigation">
+        @if (!string.IsNullOrEmpty(user))
+        {
+            <div>
+                <a href="/Timeline">My Timeline</a> |
+                <a href="/public">Public Timeline</a> |
+                <a href="/Logout">Sign out [@user]</a>
+            </div>
+        }
+        else
+        {
+            <div>
+                <a href="/">Public Timeline</a> |
+                <a href="/Register">Sign Up</a> |
+                <a href="/Login">Sign In</a>
+            </div>
+        }
+    </div>
+
+    @if (TempData["FlashMessages"] is string flashMessagesJson)
+    {
+        var messages = JsonConvert.DeserializeObject<List<string>>(flashMessagesJson) ?? new List<string>();
+        
+        <ul class="flashes">
+            @foreach (var message in messages!)
+            {
+                <li>@message</li>
+            }
+        </ul>
+    }
+
+    <div class="body">
+        @RenderBody()
+    </div>
+
+    <div class="footer">
+        MiniTwit &mdash; An ASP.NET Core Application
+    </div>
+</div>
+</body>
+</html>

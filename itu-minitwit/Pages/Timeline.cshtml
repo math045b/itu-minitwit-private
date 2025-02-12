@@ -1,0 +1,76 @@
+@page "/{author}"
+@model itu_minitwit.Pages.TimelineModel
+@{
+    ViewData["Title"] = Model.PageTitle;
+    Layout = "Shared/_Layout";
+    var author = HttpContext.GetRouteValue("author") ?? "";
+}
+
+<h2>@Model.PageTitle</h2>
+
+@if (Model.IsUserLoggedIn && !author.Equals("public"))
+{
+    if (author.Equals("Timeline"))
+    {
+        <div class="twitbox">
+            <h3>What's on your mind @Model.Username?</h3>
+            <form method="post" action="/add_message">
+                @Html.AntiForgeryToken()
+                <p><input type="text" name="text" size="60">
+                    <input type="submit" value="Share">
+            </form>
+        </div>
+
+    }
+    else
+    {
+        <div class=followstatus>
+            @if (author.Equals(Model.Username))
+            {
+                <p>This is you!</p>
+            }
+            else if (Model.Follows)
+            {
+                <p>
+                    You are currently following this user.
+                    <a class=unfollow href="/@author/unfollow"
+                       onclick="document.getElementById('unfollowForm').submit(); return false;">
+                        Unfollow user
+                    </a>
+                </p>
+                
+                <form id="unfollowForm" method="get" action="/@author/unfollow" style="display:none;"></form>
+            }
+            else
+            {
+                <p>You are not yet following this user.
+                    <a class=follow href="/@author/follow"
+                       onclick="document.getElementById('followForm').submit(); return false;">
+                        Follow user
+                    </a>
+                </p>
+                <form id="followForm" method="get" action="/@author/follow" style="display:none;"></form>
+            }
+        </div>
+    }
+}
+
+<ul class="messages">
+    @if (Model.Messages.Any())
+    {
+        @foreach (var message in Model.Messages)
+        {
+            <li>
+                <img src="@message.EmailGravatarUrl" alt="@message.Username's avatar"/>
+                <p><strong><a href="/@message.Username">@message.Username</a></strong>
+                    @message.Text
+                    <small>&mdash; @message.PublishedAt.ToString("g")</small>
+                </p>
+            </li>
+        }
+    }
+    else
+    {
+        <li><em>There's no message so far.</em></li>
+    }
+</ul>

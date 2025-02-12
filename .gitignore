@@ -5,6 +5,11 @@
 */.idea
 */.idea/
 */.idea/*
+.idea/
+
+# obj and bin folders
+obj/
+bin/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
