@@ -68,9 +68,5 @@ public partial class MiniTwitDbContext : DbContext
                 .HasColumnName("username");
                 
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
