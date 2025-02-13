@@ -25,8 +25,10 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Make session cookie HttpOnly
     options.Cookie.IsEssential = true; // Mark session cookie as essential
 });
+
+var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MiniTwitDbContext>(options =>
-    options.UseSqlite("Data Source=minitwit.db"));
+    options.UseSqlite(connection));
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
