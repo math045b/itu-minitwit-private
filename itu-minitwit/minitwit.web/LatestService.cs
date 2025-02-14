@@ -23,7 +23,7 @@ public class LatestService
         return latestProcessedCommandId;
     }
 
-    public async Task UpdateLatest(int latest = -1)
+    public async Task UpdateLatest(int latest)
     {
         if (latest != -1)
         { 
