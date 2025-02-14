@@ -1,8 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Runtime.Serialization;
 using System.Text.Json;
 using FluentAssertions;
+using itu_minitwit.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
 
 namespace itu_minitwit.test;
 
@@ -30,6 +33,15 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     [Fact]
     public async Task GetMessages_Returns_Messages()
     {
+        var context = fixture.GetDbContext();
+        var user = new User{Username = "test2", Email = "test@test.com", PwHash = "23456"};
+        var msg = new Message{AuthorId = 1, Text = "Hello from test", PubDate = (int) DateTimeOffset.Now.ToUnixTimeSeconds()};
+        
+        await context.Users.AddAsync(user);
+        await context.Messages.AddAsync(msg);
+        await context.SaveChangesAsync();
+        
+        
         var response = await client.GetAsync("/msgs");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
