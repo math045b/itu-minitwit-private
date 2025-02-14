@@ -26,4 +26,13 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         Assert.Equal(-1, latestValue);
     }
+
+    [Fact]
+    public async Task GetMessages_Returns_Messages()
+    {
+        var response = await client.GetAsync("/msgs");
+        var json = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(json);
+        var messages = doc.RootElement.GetProperty("messages");
+    }
 }
