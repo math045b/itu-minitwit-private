@@ -45,7 +45,8 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         var response = await client.GetAsync("/msgs");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
-        var messages = doc.RootElement.GetProperty("messages");
+        var messages = JsonConvert.DeserializeObject<List<Message>>(json);
+        
         Assert.Equal(messages.First().Text, msg.Text);
     }
 }
