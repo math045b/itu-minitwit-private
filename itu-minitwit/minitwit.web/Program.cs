@@ -87,3 +87,9 @@ app.MapControllers();
 
 app.Run();
 
+namespace minitwit.web
+{
+    public partial class Program
+    {
+    }
+}
