@@ -52,4 +52,21 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
 
         return Redirect("/Timeline");
     }
+
+    [IgnoreAntiforgeryToken]
+    [HttpGet("msgs")]
+    public async Task<IActionResult> GetMessages()
+    {
+        await latestService.UpdateLatest(1);
+        
+        var messages = db.Messages 
+            .Join(db.Users,
+                m => m.AuthorId,
+                a => a.UserId,
+                (m,a) => new {user = a.Username, text = m.Text, pub_date = m.PubDate}
+                )
+            .ToList();
+
+        return Json(messages);
+    }
 }
