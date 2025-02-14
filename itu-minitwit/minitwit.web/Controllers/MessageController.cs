@@ -3,12 +3,14 @@ using itu_minitwit.Data;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
+using itu_minitwit.Pages;
+using itu_minitwit.SimulatorAPI;
 using Newtonsoft.Json;
 
 namespace itu_minitwit.Controllers;
 
 [Route("/")]
-public class MessageController(MiniTwitDbContext db) : Controller
+public class MessageController(MiniTwitDbContext db, LatestService latestService) : Controller
 {
     [IgnoreAntiforgeryToken]
     [HttpPost("add_message")]
@@ -49,5 +51,22 @@ public class MessageController(MiniTwitDbContext db) : Controller
         TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "Your message was recorded." });
 
         return Redirect("/Timeline");
+    }
+
+    [IgnoreAntiforgeryToken]
+    [HttpGet("msgs")]
+    public async Task<IActionResult> GetMessages()
+    {
+        await latestService.UpdateLatest(1);
+        
+        var messages = db.Messages 
+            .Join(db.Users,
+                m => m.AuthorId,
+                a => a.UserId,
+                (m,a) => new {user = a.Username, text = m.Text, pub_date = m.PubDate}
+                )
+            .ToList();
+
+        return Json(messages);
     }
 }
