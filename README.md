@@ -18,7 +18,7 @@ As a \<who>, I want to \<What>, in order to \<Why>
 \- [ ] Criteria2
 
 \Timespent Xh Ym
-\Estimated time Xh Ym
+\Time estimated Xh Ym
 
 ## Branch named
 All lowercap with - fx update-readme
