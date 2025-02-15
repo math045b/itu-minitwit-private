@@ -14,8 +14,6 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     private readonly InMemoryWebApplicationFactory fixture = fixture;
     private readonly HttpClient client = fixture.CreateClient(new WebApplicationFactoryClientOptions
         { AllowAutoRedirect = true, HandleCookies = true });
-    private const string LatestFilePath = "../minitwit.web/SimulatorAPI/latest_processed_sim_action_id.txt";
-
     
     [Fact]
     public async Task GetLatestTest_FileIsEmpty_Minius1()
