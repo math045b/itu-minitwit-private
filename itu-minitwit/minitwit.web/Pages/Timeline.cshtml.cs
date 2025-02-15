@@ -36,32 +36,21 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
     public List<MessageModel> GetMessages()
     {
-        var messages = db.Messages
+        return db.Messages
             .Where(m => m.Flagged == 0)
             .OrderByDescending(m => m.PubDate)
             .Take(30)
-            .Select(m => new
-            {
-                m.Text,
-                m.PubDate,
-                m.AuthorId
-            })
-            .ToList();
-
-        return messages.Select(m => new MessageModel
-            {
-                Text = m.Text,
-                PublishedAt = DateTimeOffset.FromUnixTimeSeconds((long)m.PubDate!).DateTime,
-                Username = db.Users
-                    .Where(u => u.UserId == m.AuthorId)
-                    .Select(u => u.Username)
-                    .First(),
-                EmailGravatarUrl = GetGravatarUrl(
-                    db.Users
-                        .Where(u => u.UserId == m.AuthorId)
-                        .Select(u => u.Email)
-                        .First())
-            })
+            .Join(db.Users,
+                m => m.AuthorId,
+                a => a.UserId,
+                (m,a) => new MessageModel
+                {
+                    Text = m.Text, 
+                    PublishedAt = DateTimeOffset.FromUnixTimeSeconds((long)m.PubDate!).DateTime,
+                    Username = a.Username,
+                    EmailGravatarUrl = GetGravatarUrl(a.Email, 50),
+                }
+            )
             .ToList();
     }
 
@@ -75,7 +64,7 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
     if (author == "Timeline")
     {
-        author = Username; // Ensure we use the logged-in user's username
+        author = Username; 
         author_id = db.Users
             .Where(u => u.Username == author)
             .Select(u => u.UserId)
@@ -93,7 +82,7 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
                         (m.AuthorId == author_id || followedUserIds.Contains(m.AuthorId)))
             .OrderByDescending(m => m.PubDate)
             .Take(30)
-            .ToList(); // Using ToList() to fetch the result into a List<Message>
+            .ToList(); 
 
         return MapMessages(messages);
     }
@@ -104,13 +93,11 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
             .Where(m => m.Flagged == 0 && m.AuthorId == author_id)
             .OrderByDescending(m => m.PubDate)
             .Take(30)
-            .ToList(); // Using ToList() to fetch the result into a List<Message>
+            .ToList();
 
         return MapMessages(messages);
     }
 }
-
-// Helper function to map messages to MessageModel
 private List<MessageModel> MapMessages(List<Message> messages)
 {
     return messages.Select(m => new MessageModel
@@ -145,7 +132,7 @@ private List<MessageModel> MapMessages(List<Message> messages)
         return result != null;
     }
 
-    private string GetGravatarUrl(string email, int size = 50)
+    private static string GetGravatarUrl(string email, int size = 50)
     {
         var hash = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(email.Trim().ToLower()));
         var hashString = string.Concat(hash.Select(b => b.ToString("x2")));
