@@ -134,7 +134,7 @@ private List<MessageModel> MapMessages(List<Message> messages)
         return result != null;
     }
 
-    private string GetGravatarUrl(string email, int size = 50)
+    private static string GetGravatarUrl(string email, int size = 50)
     {
         var hash = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(email.Trim().ToLower()));
         var hashString = string.Concat(hash.Select(b => b.ToString("x2")));
