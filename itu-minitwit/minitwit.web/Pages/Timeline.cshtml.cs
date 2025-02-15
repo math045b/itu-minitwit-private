@@ -36,32 +36,21 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
     public List<MessageModel> GetMessages()
     {
-        var messages = db.Messages
+        return db.Messages
             .Where(m => m.Flagged == 0)
             .OrderByDescending(m => m.PubDate)
             .Take(30)
-            .Select(m => new
-            {
-                m.Text,
-                m.PubDate,
-                m.AuthorId
-            })
-            .ToList();
-
-        return messages.Select(m => new MessageModel
-            {
-                Text = m.Text,
-                PublishedAt = DateTimeOffset.FromUnixTimeSeconds((long)m.PubDate!).DateTime,
-                Username = db.Users
-                    .Where(u => u.UserId == m.AuthorId)
-                    .Select(u => u.Username)
-                    .First(),
-                EmailGravatarUrl = GetGravatarUrl(
-                    db.Users
-                        .Where(u => u.UserId == m.AuthorId)
-                        .Select(u => u.Email)
-                        .First())
-            })
+            .Join(db.Users,
+                m => m.AuthorId,
+                a => a.UserId,
+                (m,a) => new MessageModel
+                {
+                    Text = m.Text, 
+                    PublishedAt = DateTimeOffset.FromUnixTimeSeconds((long)m.PubDate!).DateTime,
+                    Username = a.Username,
+                    EmailGravatarUrl = GetGravatarUrl(a.Email, 50),
+                }
+            )
             .ToList();
     }
 
