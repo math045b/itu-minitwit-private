@@ -16,9 +16,9 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         { AllowAutoRedirect = true, HandleCookies = true });
     
     [Fact]
-    public async Task GetLatestTest_FileIsEmpty_Minius1()
+    public async Task GetLatest_FileIsEmpty_Minius1()
     {
-        var response = await client.GetAsync("/api/Latest");
+        var response = await client.GetAsync("/Latest");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
         var latestValue = doc.RootElement.GetProperty("latest").GetInt32();
