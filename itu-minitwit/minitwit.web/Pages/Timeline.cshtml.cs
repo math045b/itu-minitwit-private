@@ -64,7 +64,7 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
 
     if (author == "Timeline")
     {
-        author = Username; // Ensure we use the logged-in user's username
+        author = Username; 
         author_id = db.Users
             .Where(u => u.Username == author)
             .Select(u => u.UserId)
@@ -82,7 +82,7 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
                         (m.AuthorId == author_id || followedUserIds.Contains(m.AuthorId)))
             .OrderByDescending(m => m.PubDate)
             .Take(30)
-            .ToList(); // Using ToList() to fetch the result into a List<Message>
+            .ToList(); 
 
         return MapMessages(messages);
     }
@@ -93,13 +93,11 @@ public class TimelineModel(MiniTwitDbContext db) : PageModel
             .Where(m => m.Flagged == 0 && m.AuthorId == author_id)
             .OrderByDescending(m => m.PubDate)
             .Take(30)
-            .ToList(); // Using ToList() to fetch the result into a List<Message>
+            .ToList();
 
         return MapMessages(messages);
     }
 }
-
-// Helper function to map messages to MessageModel
 private List<MessageModel> MapMessages(List<Message> messages)
 {
     return messages.Select(m => new MessageModel
