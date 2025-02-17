@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
 ﻿using itu_minitwit.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace itu_minitwit.SimulatorAPI;
 
@@ -12,14 +10,14 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
     : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult> Register([FromForm] string? username, [FromForm] string? email, [FromForm] string? psw)
+    public async Task<ActionResult> Register([FromForm] string? username, [FromForm] string? email,
+        [FromForm] string? psw)
     {
         await latestService.UpdateLatest(-1);
 
-        
         if (string.IsNullOrWhiteSpace(username))
         {
-            return new JsonResult(new { status = 400, error_msg = "You have to enter a username"})
+            return new JsonResult(new { status = 400, error_msg = "You have to enter a username" })
             {
                 StatusCode = 400
             };
@@ -27,7 +25,7 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
 
         if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
         {
-            return new JsonResult(new { status = 400, error_msg = "You have to enter a valid email address"})
+            return new JsonResult(new { status = 400, error_msg = "You have to enter a valid email address" })
             {
                 StatusCode = 400
             };
