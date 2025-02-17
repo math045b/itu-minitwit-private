@@ -1,6 +1,7 @@
 using System.Net;
 using itu_minitwit.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace itu_minitwit.SimulatorAPI;
 
@@ -73,5 +74,26 @@ public class FollowerController(MiniTwitDbContext dbContext, LatestService lates
         await dbContext.SaveChangesAsync();
     
         return NoContent();
+    }
+
+    [HttpGet("/fllws/{username}")]
+    public async Task<ActionResult> GetFollows(string username, [FromBody] int no = 100)
+    {
+        await latestService.UpdateLatest(-1); //TODO: change the update number
+    
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+    
+    
+        var following = await dbContext.Followers
+            .Where(f => f.WhoId == user!.UserId)
+            .Join(dbContext.Users,
+                f => f.WhomId,
+                u => u.UserId,
+                (f, u) => new { user = u.Username, follows = f.WhoId }
+            )
+            .Take(no)
+            .ToListAsync();
+        
+        return Ok(following);
     }
 }
