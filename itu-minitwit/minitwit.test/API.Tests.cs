@@ -125,4 +125,34 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         Assert.Equal("You have to enter a password", errorMessage);
     }
+
+    [Fact]
+    public async Task Register_UsernameTaken_StatusCode400()
+    {
+        var dbContext = fixture.GetDbContext();
+        User user = new User
+        {
+            Username = "test",
+            Email = "test@test.com",
+            PwHash = "test123!",
+        };
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("username", "test"),
+            new KeyValuePair<string, string>("email", "test@test.com"),
+            new KeyValuePair<string, string>("psw", "test123!"),
+        });
+
+        var response = await client.PostAsync("/register", content);
+
+        var json = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(json);
+        var errorMessage = doc.RootElement.GetProperty("error_msg").GetString();
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        Assert.Equal("The username is already taken", errorMessage);
+    }
 }
