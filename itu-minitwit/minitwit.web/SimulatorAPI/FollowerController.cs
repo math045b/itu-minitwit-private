@@ -14,26 +14,30 @@ public class FollowerController(MiniTwitDbContext dbContext, LatestService lates
     {
         await latestService.UpdateLatest(-1); //TODO: should change the update number
         
+    private async Task<ActionResult> Follow(string username, string follow)
+    {
         var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
         var userToFollow = dbContext.Users.FirstOrDefault(u => u.Username == follow);
-
+    
         if (user == null || userToFollow == null)
         {
             return NotFound();
         }
-        
-        var followRelation = dbContext.Followers.FirstOrDefault(f => f.WhoId == user!.UserId && 
-                                                                     f.WhomId == userToFollow!.UserId);
-
+    
+        var followRelation = dbContext.Followers.FirstOrDefault(f => f.WhoId == user!.UserId
+                                                                    && f.WhomId == userToFollow!.UserId);
+    
+        if (followRelation != null) return BadRequest("You already follow that user");
+    
         followRelation = new Follower
         {
             WhoId = user.UserId,
             WhomId = userToFollow.UserId
         };
-
+    
         dbContext.Followers.Add(followRelation);
         await dbContext.SaveChangesAsync();
-
+    
         return NoContent();
     }
     
