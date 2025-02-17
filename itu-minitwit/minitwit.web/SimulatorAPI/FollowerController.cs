@@ -22,9 +22,6 @@ public class FollowerController(MiniTwitDbContext dbContext, LatestService lates
             return NotFound();
         }
         
-        
-        
-        //dbContext.Followers.Add();
         var followRelation = dbContext.Followers.FirstOrDefault(f => f.WhoId == user!.UserId && 
                                                                      f.WhomId == userToFollow!.UserId);
 
