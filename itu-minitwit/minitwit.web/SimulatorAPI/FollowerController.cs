@@ -87,23 +87,26 @@ public class FollowerController(MiniTwitDbContext dbContext, LatestService lates
     }
 
     [HttpGet("/fllws/{username}")]
-    public async Task<ActionResult> GetFollows(string username, [FromBody] int no = 100)
+    public async Task<ActionResult> GetFollows(string username, [FromQuery] int no = 100)
     {
         await latestService.UpdateLatest(-1); //TODO: change the update number
-    
+        
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
-    
-    
-        var following = await dbContext.Followers
-            .Where(f => f.WhoId == user!.UserId)
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        var followsList = await dbContext.Followers
+            .Where(f => f.WhoId == user.UserId)
             .Join(dbContext.Users,
                 f => f.WhomId,
                 u => u.UserId,
-                (f, u) => new { user = u.Username, follows = f.WhoId }
+                (f, u) => u.Username
             )
             .Take(no)
             .ToListAsync();
-        
-        return Ok(following);
+
+        return Ok(new { follows = followsList });
     }
 }
