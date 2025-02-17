@@ -1,6 +1,4 @@
 using System.Net;
-using System.Net.Http.Json;
-using System.Runtime.Serialization;
 using System.Text.Json;
 using FluentAssertions;
 using itu_minitwit.Data;
@@ -19,6 +17,7 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     [Fact]
     public async Task GetLatest_FileIsEmpty_Minius1()
     {
+        fixture.ResetDB();
         var response = await client.GetAsync("/Latest");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
@@ -131,6 +130,7 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     [Fact]
     public async Task Register_UsernameTaken_StatusCode400()
     {
+        fixture.ResetDB();
         var dbContext = fixture.GetDbContext();
         User user = new User
         {
