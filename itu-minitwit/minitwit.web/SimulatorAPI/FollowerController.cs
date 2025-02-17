@@ -34,6 +34,6 @@ public class FollowerController(MiniTwitDbContext dbContext, LatestService lates
         dbContext.Followers.Add(followRelation);
         await dbContext.SaveChangesAsync();
 
-        return Ok();
+        return NoContent();
     }
 }
