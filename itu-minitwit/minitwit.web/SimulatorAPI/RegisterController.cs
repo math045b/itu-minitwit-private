@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using itu_minitwit.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -6,7 +8,8 @@ namespace itu_minitwit.SimulatorAPI;
 
 [Route("[Controller]")]
 [ApiController]
-public class RegisterController(LatestService latestService) : ControllerBase
+public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> passwordHasher, LatestService latestService)
+    : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult> Register([FromForm] string? username, [FromForm] string? email, [FromForm] string? psw)
@@ -33,6 +36,26 @@ public class RegisterController(LatestService latestService) : ControllerBase
         if (string.IsNullOrWhiteSpace(psw))
         {
             return new JsonResult(new { status = 400, error_msg = "You have to enter a password" })
+            {
+                StatusCode = 400
+            };
+        }
+
+        User user = new User
+        {
+            Username = username,
+            Email = email,
+        };
+        user.PwHash = passwordHasher.HashPassword(user, psw);
+
+        try
+        {
+            db.Users.Add(user);
+            await db.SaveChangesAsync();
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+        {
+            return new JsonResult(new { status = 400, error_msg = "User already exists" })
             {
                 StatusCode = 400
             };
