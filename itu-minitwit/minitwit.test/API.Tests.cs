@@ -155,4 +155,22 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         Assert.Equal("The username is already taken", errorMessage);
     }
+
+    [Fact]
+    public async Task Register_RegistersUser_StatusCode200()
+    {
+        var dbContext = fixture.GetDbContext();
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("username", "test"),
+            new KeyValuePair<string, string>("email", "test@test.com"),
+            new KeyValuePair<string, string>("psw", "test123!"),
+        });
+
+        var response = await client.PostAsync("/register", content);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var user = dbContext.Users.FirstOrDefault(user => user.Username == "test");
+        Assert.NotNull(user);
+    }
 }
