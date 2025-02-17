@@ -25,7 +25,7 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
             };
         }
 
-        if (string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
         {
             return new JsonResult(new { status = 400, error_msg = "You have to enter a valid email address"})
             {
