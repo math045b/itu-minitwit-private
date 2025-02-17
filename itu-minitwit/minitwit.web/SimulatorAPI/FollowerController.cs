@@ -36,4 +36,26 @@ public class FollowerController(MiniTwitDbContext dbContext, LatestService lates
 
         return NoContent();
     }
+    
+    private async Task<ActionResult> Unfollow(string username, string unfollow)
+    {
+        var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
+        var userToUnfollow = dbContext.Users.FirstOrDefault(u => u.Username == unfollow);
+    
+        if (user == null || userToUnfollow == null)
+        {
+            return NotFound();
+        }
+    
+        var followRelation =
+            dbContext.Followers.FirstOrDefault(f => f.WhoId == user!.UserId
+                                                    && f.WhomId == userToUnfollow!.UserId);
+    
+        if (followRelation == null) return NotFound();
+    
+        dbContext.Followers.Remove(followRelation);
+        await dbContext.SaveChangesAsync();
+    
+        return NoContent();
+    }
 }
