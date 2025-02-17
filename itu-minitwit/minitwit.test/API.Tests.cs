@@ -112,7 +112,7 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     {
         var content = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("username", ""),
+            new KeyValuePair<string, string>("username", "test"),
             new KeyValuePair<string, string>("email", "test@test.com"),
             new KeyValuePair<string, string>("psw", ""),
         });
