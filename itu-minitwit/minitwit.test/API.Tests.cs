@@ -65,4 +65,24 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         
         Assert.Equal(messages.First().Text, msg.Text);
     }
+
+    [Fact]
+    public async Task Register_UsernameValidation_StatusCode400()
+    {
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("username", ""),
+            new KeyValuePair<string, string>("email", "test@test.com"),
+            new KeyValuePair<string, string>("psw", "test123!"),
+        });
+
+        var response = await client.PostAsync("/register", content);
+
+        var json = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(json);
+        var errorMessage = doc.RootElement.GetProperty("error_msg").GetString();
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        Assert.Equal("You have to enter a username", errorMessage);
+    }
 }
