@@ -192,6 +192,36 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         var user = dbContext.Users.FirstOrDefault(user => user.Username == "test");
         Assert.Null(user);
     }
+
+    [Fact]
+    public async Task FollowUser_FollowsUser_NoContent()
+    {
+        // Arrange
+        fixture.ResetDB();
+        
+        var dbContext = fixture.GetDbContext();
+        var user1 = new User { Username = "test", Email = "", PwHash = "" };
+        var user2 = new User { Username = "test2", Email = "", PwHash = "" };
+        
+        dbContext.Users.Add(user1);
+        dbContext.Users.Add(user2);
+        await dbContext.SaveChangesAsync();
+        
+        // Act
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("follow", "test2"),
+        });
+
+        var response = await client.PostAsync("/fllws/test", content);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var user = dbContext.Users.FirstOrDefault(user => user.Username == "test2");
+
+        // Assert
+        Assert.NotNull(user);
+    }
+
     [Fact]
     public async Task UnfollowUser_UnfollowsItself_BadRequest()
     {
