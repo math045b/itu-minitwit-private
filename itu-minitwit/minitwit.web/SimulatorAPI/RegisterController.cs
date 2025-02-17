@@ -53,7 +53,7 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
         }
         catch (Microsoft.EntityFrameworkCore.DbUpdateException)
         {
-            return new JsonResult(new { status = 400, error_msg = "User already exists" })
+            return new JsonResult(new { status = 400, error_msg = "The username is already taken" })
             {
                 StatusCode = 400
             };
