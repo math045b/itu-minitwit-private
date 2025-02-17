@@ -12,9 +12,10 @@ namespace itu_minitwit.test;
 public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<InMemoryWebApplicationFactory>
 {
     private readonly InMemoryWebApplicationFactory fixture = fixture;
+
     private readonly HttpClient client = fixture.CreateClient(new WebApplicationFactoryClientOptions
         { AllowAutoRedirect = true, HandleCookies = true });
-    
+
     [Fact]
     public async Task GetLatest_FileIsEmpty_Minius1()
     {
@@ -22,8 +23,8 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
         var latestValue = doc.RootElement.GetProperty("latest").GetInt32();
-        
-        
+
+
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         Assert.Equal(-1, latestValue);
     }
@@ -35,13 +36,13 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         var lastAction = new LatestProcessedSimAction { Id = 230 };
         await dbContext.AddAsync(lastAction);
         await dbContext.SaveChangesAsync();
-        
+
         var response = await client.GetAsync("/Latest");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
         var latestValue = doc.RootElement.GetProperty("latest").GetInt32();
-        
-        
+
+
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         Assert.Equal(lastAction.Id, latestValue);
     }
@@ -50,19 +51,20 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     public async Task GetMessages_Returns_Messages()
     {
         var context = fixture.GetDbContext();
-        var user = new User{Username = "test2", Email = "test@test.com", PwHash = "23456"};
-        var msg = new Message{AuthorId = 1, Text = "Hello from test", PubDate = (int) DateTimeOffset.Now.ToUnixTimeSeconds()};
-        
+        var user = new User { Username = "test2", Email = "test@test.com", PwHash = "23456" };
+        var msg = new Message
+            { AuthorId = 1, Text = "Hello from test", PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds() };
+
         await context.Users.AddAsync(user);
         await context.Messages.AddAsync(msg);
         await context.SaveChangesAsync();
-        
-        
+
+
         var response = await client.GetAsync("/msgs");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
         var messages = JsonConvert.DeserializeObject<List<Message>>(json);
-        
+
         Assert.Equal(messages.First().Text, msg.Text);
     }
 
