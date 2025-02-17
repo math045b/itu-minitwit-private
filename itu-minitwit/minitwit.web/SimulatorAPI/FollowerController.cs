@@ -17,10 +17,20 @@ public class FollowerController(MiniTwitDbContext dbContext, LatestService lates
         
         if (follow != null)
         {
+            if (username == follow)
+            {
+                return BadRequest("You cannot follow yourself");
+            }
+            
             return await Follow(username, follow);
         }
         if (unfollow != null)
         {
+            if (username == unfollow)
+            {
+                return BadRequest("You cannot follow yourself");
+            }
+            
             return await Unfollow(username, unfollow);
         }
 
