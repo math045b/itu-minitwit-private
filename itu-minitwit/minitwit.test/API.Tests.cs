@@ -175,4 +175,37 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         var user = dbContext.Users.FirstOrDefault(user => user.Username == "test");
         Assert.NotNull(user);
     }
+    
+    [Fact]
+    public async Task Getfollows_ReturnsFollows()
+    {
+        // Arrange
+        fixture.ResetDB();
+        
+        var dbContext = fixture.GetDbContext();
+        var user1 = new User { UserId = 1, Username = "test", Email = "", PwHash = "" };
+        var user2 = new User { UserId = 2, Username = "test2", Email = "", PwHash = "" };
+
+        var followRelation = new Follower
+        {
+            WhoId = user1.UserId,
+            WhomId = user2.UserId
+        };
+
+        await dbContext.Users.AddAsync(user1);
+        await dbContext.Users.AddAsync(user2);
+        await dbContext.Followers.AddAsync(followRelation);
+
+        await dbContext.SaveChangesAsync();
+        
+        // Act
+        var response = await client.GetAsync("/fllws/test");
+        var json = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(json);
+        var follows = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(json);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(user2.Username, follows!["follows"].First());
+    }
 }
