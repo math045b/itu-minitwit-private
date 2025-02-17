@@ -10,10 +10,22 @@ namespace itu_minitwit.SimulatorAPI;
 public class FollowerController(MiniTwitDbContext dbContext, LatestService latestService) : ControllerBase
 {
     [HttpPost("/fllws/{username}")]
-    public async Task<ActionResult> Follow(string username, [FromForm] string? follow)
+    public async Task<ActionResult> FollowOrUnfollow(string username, [FromForm] string? follow, [FromForm] string? unfollow)
     {
-        await latestService.UpdateLatest(-1); //TODO: should change the update number
+        await latestService.UpdateLatest(-1);
         
+        if (follow != null)
+        {
+            return await Follow(username, follow);
+        }
+        if (unfollow != null)
+        {
+            return await Unfollow(username, unfollow);
+        }
+
+        return BadRequest("You must provide a user to follow or unfollow");
+    }
+    
     private async Task<ActionResult> Follow(string username, string follow)
     {
         var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
