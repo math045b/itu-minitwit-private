@@ -82,10 +82,7 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
         var user = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null)
         {
-            return new JsonResult(new { status = 404, error_msg = "User does not exist!" })
-            {
-                StatusCode = 404
-            };
+            return NotFound(new { message = "User not found" });
         }
         
         var messages = await db.Messages
