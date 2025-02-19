@@ -85,7 +85,7 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
             return NotFound(new { message = "User not found" });
         }
         
-        var messages = await db.Messages
+        var filtered_messages = await db.Messages
             .Where(m => m.AuthorId == user.UserId && m.Flagged == 0)
             .OrderByDescending(m => m.PubDate)
             .Take(pageSize)
@@ -96,7 +96,44 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
                 user = username
             })
             .ToListAsync();
+        
+        if (filtered_messages.Count == 0)
+        {
+            return new JsonResult(new { status = 204, error_msg = "" })
+            {
+                StatusCode = 204
+            };
+        }
 
-        return Ok(messages);
+        return Ok(filtered_messages);
     }
+
+
+
+    [HttpPost("msgs/{username}")]
+    public async Task<IActionResult> PostMessage(string username, [FromForm] string content)
+    {
+        var user = db.Users.FirstOrDefault(u => u.Username == username);
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        
+        var message = new Message
+        {
+            AuthorId = user.UserId,
+            Text = content,
+            Flagged = 0,
+            PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds(),
+        };
+        
+        db.Messages.Add(message);
+        await db.SaveChangesAsync();
+        
+        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "Your message was recorded." });
+
+        return NoContent();
+    }
+    
 }
