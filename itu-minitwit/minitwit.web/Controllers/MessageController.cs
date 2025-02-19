@@ -79,30 +79,29 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
         int pageSize = 100;
         await latestService.UpdateLatest(1);
         
-        var user = await db.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var user = db.Users.FirstOrDefault(u => u.Username == username);
         if (user == null)
         {
             return NotFound(new { message = "User not found" });
         }
         
-        var filtered_messages = await db.Messages
+        var filtered_messages = db.Messages
             .Where(m => m.AuthorId == user.UserId && m.Flagged == 0)
             .OrderByDescending(m => m.PubDate)
             .Take(pageSize)
             .Select(m => new 
             {
-                content = m.Text,
+                user = username,
+                text = m.Text,
                 pub_date = m.PubDate,
-                user = username
             })
-            .ToListAsync();
+            .ToList();
+        
         
         if (filtered_messages.Count == 0)
         {
-            return new JsonResult(new { status = 204, error_msg = "" })
-            {
-                StatusCode = 204
-            };
+            return NoContent();
+
         }
 
         return Ok(filtered_messages);
@@ -135,5 +134,6 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
 
         return NoContent();
     }
+    
     
 }
