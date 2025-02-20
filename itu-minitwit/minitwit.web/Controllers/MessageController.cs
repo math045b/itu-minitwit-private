@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using itu_minitwit.Data;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using itu_minitwit.Pages;
 using itu_minitwit.SimulatorAPI;
@@ -70,4 +71,70 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
 
         return Json(messages);
     }
+
+
+    [IgnoreAntiforgeryToken]
+    [HttpGet("msgs/{username}")]
+    public async Task<IActionResult> GetFilteredMessages(string username)
+    {
+        int pageSize = 100;
+        await latestService.UpdateLatest(1);
+        
+        var user = db.Users.FirstOrDefault(u => u.Username == username);
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+        
+        var filtered_messages = db.Messages
+            .Where(m => m.AuthorId == user.UserId && m.Flagged == 0)
+            .OrderByDescending(m => m.PubDate)
+            .Take(pageSize)
+            .Select(m => new 
+            {
+                user = username,
+                text = m.Text,
+                pub_date = m.PubDate,
+            })
+            .ToList();
+        
+        
+        if (filtered_messages.Count == 0)
+        {
+            return NoContent();
+
+        }
+
+        return Ok(filtered_messages);
+    }
+
+
+
+    [HttpPost("msgs/{username}")]
+    public async Task<IActionResult> PostMessage(string username, [FromForm] string content)
+    {
+        var user = db.Users.FirstOrDefault(u => u.Username == username);
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        
+        var message = new Message
+        {
+            AuthorId = user.UserId,
+            Text = content,
+            Flagged = 0,
+            PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds(),
+        };
+        
+        db.Messages.Add(message);
+        await db.SaveChangesAsync();
+        
+        TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "Your message was recorded." });
+
+        return NoContent();
+    }
+    
+    
 }

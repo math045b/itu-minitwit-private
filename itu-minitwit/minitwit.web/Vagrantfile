@@ -1,0 +1,85 @@
+$ip_file = "db_ip.txt"
+
+Vagrant.configure("2") do |config|
+  config.vm.box = 'digital_ocean'
+  config.vm.box_url = "https://github.com/devopsgroup-io/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+  config.ssh.private_key_path = '~/.ssh/id_rsa'
+  config.vm.synced_folder ".", "/vagrant", type: "rsync"
+
+  # Database Server Configuration
+  config.vm.define "dbserver", primary: true do |db_server|
+    db_server.vm.provider :digital_ocean do |provider|
+      provider.ssh_key_name = ENV["SSH_KEY_NAME"]
+      provider.token = ENV["DIGITAL_OCEAN_TOKEN"]
+      provider.image = 'ubuntu-22-04-x64'
+      provider.region = 'fra1'
+      provider.size = 's-1vcpu-1gb'
+      provider.privatenetworking = true
+    end
+
+    db_server.vm.hostname = "dbserver"
+
+    db_server.vm.provision "shell", inline: <<-SHELL
+      echo "Updating package lists..."
+      sudo apt-get update
+      
+      echo "Installing SQLite..."
+      sudo apt-get install -y sqlite3 libsqlite3-dev
+      
+      echo "SQLite installation complete."
+      
+      mkdir -p /home/vagrant/app
+      cp /vagrant/minitwit.db /home/vagrant/app/minitwit.db
+    SHELL
+
+    db_server.vm.provision "shell", inline: <<-SHELL
+      remote_ip=$(hostname -I | awk '{print $1}')
+      echo $remote_ip > /vagrant/db_ip.txt
+    SHELL
+  end
+
+  # Application Server Configuration
+  config.vm.define "appserver", primary: false do |app_server|
+    app_server.vm.provider :digital_ocean do |provider|
+      provider.ssh_key_name = ENV["SSH_KEY_NAME"]
+      provider.token = ENV["DIGITAL_OCEAN_TOKEN"]
+      provider.image = 'ubuntu-22-04-x64'
+      provider.region = 'fra1'
+      provider.size = 's-1vcpu-1gb'
+      provider.privatenetworking = true
+    end
+  
+    app_server.vm.hostname = "appserver"
+  
+    app_server.vm.provision "shell", inline: <<-SHELL
+      while [ ! -f /vagrant/db_ip.txt ]; do
+        sleep 1
+      done
+      
+      echo "Updating package lists..."
+      sudo apt-get update
+      
+      echo "Installing .NET SDK..."
+      wget https://dot.net/v1/dotnet-install.sh
+      chmod +x dotnet-install.sh
+      ./dotnet-install.sh --channel 8.0
+      export PATH=$PATH:$HOME/.dotnet
+    
+      echo "Creating application directory..."
+      mkdir -p /home/vagrant/app
+    
+      echo "Copying application files..."
+      # Copy your actual program.cs from the synced folder
+      cp -r /vagrant/. /home/vagrant/app/.
+    
+      echo "Building the C# program..."
+     
+      cd /home/vagrant/app/  # Navigate into the project directory
+      dotnet build -o /home/vagrant/app/out  # Build the project and output to out directory
+      
+      echo "Running the C# program..."
+      cd /home/vagrant/app
+      dotnet run
+    SHELL
+  end
+end
