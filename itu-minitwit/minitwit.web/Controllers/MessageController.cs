@@ -65,6 +65,7 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
                 a => a.UserId,
                 (m,a) => new {user = a.Username, text = m.Text, pub_date = m.PubDate}
                 )
+            .Take(100)
             .ToList();
 
         return Json(messages);
