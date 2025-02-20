@@ -8,6 +8,7 @@ using Scriban;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using itu_minitwit;
 using Microsoft.EntityFrameworkCore;
 using itu_minitwit.Data;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<LatestService>();
 
 builder.Services.AddSession(options =>
 {
@@ -32,6 +34,8 @@ builder.Services.AddDbContext<MiniTwitDbContext>(options =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -39,6 +43,12 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<MiniTwitDbContext>();
     dbContext.Database.Migrate();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
@@ -77,3 +87,9 @@ app.MapControllers();
 
 app.Run();
 
+namespace minitwit.web
+{
+    public partial class Program
+    {
+    }
+}
