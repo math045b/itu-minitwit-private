@@ -11,9 +11,9 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
 {
     [HttpPost]
     public async Task<ActionResult> Register([FromForm] string? username, [FromForm] string? email,
-        [FromForm] string? psw)
+        [FromForm] string? psw, [FromQuery] int? latest)
     {
-        await latestService.UpdateLatest(-1);
+        await latestService.UpdateLatest(latest);
 
         if (string.IsNullOrWhiteSpace(username))
         {

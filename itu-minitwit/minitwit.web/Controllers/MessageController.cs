@@ -55,9 +55,9 @@ public class MessageController(MiniTwitDbContext db, LatestService latestService
 
     [IgnoreAntiforgeryToken]
     [HttpGet("msgs")]
-    public async Task<IActionResult> GetMessages()
+    public async Task<IActionResult> GetMessages([FromQuery] int? latest)
     {
-        await latestService.UpdateLatest(1);
+        await latestService.UpdateLatest(latest);
         
         var messages = db.Messages 
             .Join(db.Users,

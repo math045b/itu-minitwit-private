@@ -12,13 +12,14 @@ public class LatestService(MiniTwitDbContext dbContext)
         return latestProcessedCommandId.Id;
     }
 
-    public async Task UpdateLatest(int latest)
+    public async Task UpdateLatest(int? latest)
     {
-        if (latest != -1)
+        var newLatest = latest ?? -1; 
+        if (newLatest != -1)
         {
             await dbContext.LatestProcessedSimActions.ExecuteDeleteAsync();
 
-            var latestObj = new LatestProcessedSimAction { Id = latest };
+            var latestObj = new LatestProcessedSimAction { Id = newLatest };
 
             await dbContext.LatestProcessedSimActions.AddAsync(latestObj);
             await dbContext.SaveChangesAsync();
