@@ -2,7 +2,7 @@
 
 namespace itu_minitwit.SimulatorAPI;
 
-[Route("api/[Controller]")]
+[Route("[Controller]")]
 [ApiController]
 public class LatestController(LatestService latestService) : ControllerBase
 {
