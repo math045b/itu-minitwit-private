@@ -89,7 +89,7 @@ public class FollowerController(MiniTwitDbContext dbContext, LatestService lates
     [HttpGet("/fllws/{username}")]
     public async Task<ActionResult> GetFollows(string username, [FromQuery] int? latest, [FromQuery] int no = 100)
     {
-        await latestService.UpdateLatest(latest); //TODO: change the update number
+        await latestService.UpdateLatest(latest);
         
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null)
