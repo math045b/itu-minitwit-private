@@ -1,5 +1,5 @@
 # itu-minitwit
-This project is part of the 'DevOps' course at the IT-University of Copenhagen in 2025
+This project is part of the ['DevOps'](https://github.com/itu-devops/lecture_notes) course at the IT-University of Copenhagen in 2025
 
 ## Members
 Co-authored-by: Anthon \<acah@itu.dk>\
