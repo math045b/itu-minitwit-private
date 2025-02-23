@@ -8,8 +8,6 @@
 
     <ItemGroup>
       <Folder Include="Dto's\" />
-      <Folder Include="RepositoryInterfaces\" />
-      <Folder Include="Services\" />
     </ItemGroup>
 
 </Project>
