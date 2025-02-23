@@ -17,7 +17,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     public async Task GetLatest_FileIsEmpty_Minius1()
     {
         fixture.ResetDB();
-        var response = await client.GetAsync("/Latest");
+        var response = await client.GetAsync("api/Latest");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
         var latestValue = doc.RootElement.GetProperty("latest").GetInt32();
@@ -29,16 +29,16 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task GetLatest_ThereIsAValue_TheValue()
     {
+        fixture.ResetDB();
         var dbContext = fixture.GetDbContext();
         var lastAction = new LatestProcessedSimAction { Id = 230 };
         await dbContext.AddAsync(lastAction);
         await dbContext.SaveChangesAsync();
 
-        var response = await client.GetAsync("/Latest");
+        var response = await client.GetAsync("api/Latest");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
         var latestValue = doc.RootElement.GetProperty("latest").GetInt32();
-
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         Assert.Equal(lastAction.Id, latestValue);
