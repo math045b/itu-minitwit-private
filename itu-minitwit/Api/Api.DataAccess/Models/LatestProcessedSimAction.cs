@@ -1,4 +1,7 @@
-﻿namespace Api.DataAccess.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Api.DataAccess.Models;
 
 public class LatestProcessedSimAction
 {

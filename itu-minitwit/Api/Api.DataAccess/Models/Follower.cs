@@ -1,8 +1,8 @@
 ﻿namespace Api.DataAccess.Models;
 
-public partial class Follower
+public class Follower
 {
-    public int? WhoId { get; set; }
+    public int WhoId { get; set; }
 
-    public int? WhomId { get; set; }
+    public int WhomId { get; set; }
 }

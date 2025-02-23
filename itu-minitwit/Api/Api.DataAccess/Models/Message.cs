@@ -1,6 +1,6 @@
 ﻿namespace Api.DataAccess.Models;
 
-public partial class Message
+public class Message
 {
     public int MessageId { get; set; }
 

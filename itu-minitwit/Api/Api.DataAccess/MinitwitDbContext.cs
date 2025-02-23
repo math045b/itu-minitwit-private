@@ -3,34 +3,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api.DataAccess;
 
-public class MiniTwitDbContext : DbContext
+public partial class MinitwitDbContext : DbContext
 {
-    public MiniTwitDbContext()
+    public MinitwitDbContext()
     {
     }
 
-    public MiniTwitDbContext(DbContextOptions<MiniTwitDbContext> options)
+    public MinitwitDbContext(DbContextOptions<MinitwitDbContext> options)
         : base(options)
     {
     }
 
     public virtual DbSet<Follower> Followers { get; set; }
 
+    public virtual DbSet<LatestProcessedSimAction> LatestProcessedSimActions { get; set; }
+
     public virtual DbSet<Message> Messages { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-    
-    public virtual DbSet<LatestProcessedSimAction> LatestProcessedSimActions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasAnnotation("Sqlite:Autoincrement", true);
-        
         modelBuilder.Entity<Follower>(entity =>
         {
-            entity.ToTable("follower");
-
             entity.HasKey(e => new { e.WhoId, e.WhomId });
+
+            entity.ToTable("follower");
 
             entity.Property(e => e.WhoId).HasColumnName("who_id");
             entity.Property(e => e.WhomId).HasColumnName("whom_id");
@@ -52,7 +50,9 @@ public class MiniTwitDbContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.ToTable("user");
-                entity.HasIndex(e => e.Username).IsUnique();
+
+            entity.HasIndex(e => e.Username, "IX_user_username").IsUnique();
+
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Email)
                 .HasColumnType("string")
@@ -63,15 +63,10 @@ public class MiniTwitDbContext : DbContext
             entity.Property(e => e.Username)
                 .HasColumnType("string")
                 .HasColumnName("username");
-                
         });
+
+        OnModelCreatingPartial(modelBuilder);
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
-    {
-        if (LatestProcessedSimActions.Count() > 1)
-            throw new InvalidOperationException("Only one entry is allowed in this table.");
-        
-        return base.SaveChangesAsync(cancellationToken);
-    }
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

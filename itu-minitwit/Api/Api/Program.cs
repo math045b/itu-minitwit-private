@@ -10,7 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<MiniTwitDbContext>(options =>
+builder.Services.AddDbContext<MinitwitDbContext>(options =>
     options.UseSqlite(connection));
 
 var app = builder.Build();
