@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace Api.UnitTest;
 
-public class InMemoryWebApplicationFactory : WebApplicationFactory<Program>
+public class InMemoryWebApplicationFactory : WebApplicationFactory<Api.Program>
 {
     private const string ConnectionString = "DataSource=:memory:";
     
