@@ -1,4 +1,7 @@
 using Api.DataAccess;
+using Api.DataAccess.Repositories;
+using Api.Services.RepositoryInterfaces;
+using Api.Services.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Repositories
+builder.Services.AddScoped<ILatestRepository, LatestRepository>();
+
+//Services
+builder.Services.AddScoped<ILatestService, LatestService>();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MinitwitDbContext>(options =>
