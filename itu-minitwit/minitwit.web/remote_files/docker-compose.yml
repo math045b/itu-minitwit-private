@@ -1,0 +1,14 @@
+﻿version: '3.3'
+
+networks:
+  main:
+
+services:
+
+  minitwitimage:
+    image: ${DOCKER_USERNAME}/minitwitimage
+    container_name: minitwit
+    networks:
+      - main
+    ports:
+      - "8080:5000"
