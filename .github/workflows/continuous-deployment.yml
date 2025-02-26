@@ -22,7 +22,7 @@ jobs:
   
       - name: Test
         run: |
-           dotnet test --no-build --verbosity normal
+           dotnet test --no-build --verbosity normal itu-minitwit
         
 
       - name: Login to Docker Hub
