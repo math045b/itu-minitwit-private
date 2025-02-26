@@ -2,7 +2,7 @@ name: continuous-deployment.yml
 on:
   push:
     branches:
-      - main
+      - create-workflow
   pull_request:
     branches:
       - main
@@ -48,7 +48,7 @@ jobs:
         run: |
           ssh $SSH_USER@$SSH_HOST -i 
           ~/.ssh/do_ssh_key -o StrictHostKeyChecking=no
-          '/home/vagrant/app/deploy.sh'
+          '/minitwit/deploy.sh'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
