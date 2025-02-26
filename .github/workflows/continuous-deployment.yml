@@ -21,7 +21,7 @@ jobs:
         run: dotnet build itu-minitwit/minitwit.web/minitwit.web.csproj 
 
       - name: Test
-        run: dotnet test ./itu-minitwit/minitwit.test/minitwit.test.csproj --no-build --verbosity normal
+        run: dotnet test ./itu-minitwit/minitwit.test/minitwit.test.csproj --verbosity normal
       
       
       
