@@ -2,6 +2,8 @@
 
 services:
   itu-minitwit:
+    image: ${DOCKER_USERNAME}/minitwitimage
+    container_name: minitwit
     build:
       context: .
       dockerfile: Dockerfile-minitwit
