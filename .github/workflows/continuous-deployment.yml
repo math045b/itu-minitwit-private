@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: dotnet build  
+        run: dotnet build itu-minitwit/minitwit.web/minitwit.web.csproj 
   
       - name: Test
         run: |
