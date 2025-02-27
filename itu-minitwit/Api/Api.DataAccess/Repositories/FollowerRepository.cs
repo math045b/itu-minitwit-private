@@ -47,7 +47,7 @@ public class FollowRepository(MinitwitDbContext dbContext) : IFollowRepository
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<string>> GetFollows(string username, [FromQuery] int? latest, [FromQuery] int no = 100)
+    public async Task<IEnumerable<string>> GetFollows(string username, int no = 100)
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
 
