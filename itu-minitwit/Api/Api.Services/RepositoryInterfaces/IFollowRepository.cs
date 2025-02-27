@@ -4,9 +4,9 @@ namespace Api.Services.RepositoryInterfaces;
 
 public interface IFollowRepository
 {
-    public Task<ActionResult> Follow();
+    public Task Follow(string username, string follow);
     
-    public Task<ActionResult> Unfollow();
+    public Task Unfollow(string username, string follow);
     
-    public Task<ActionResult> GetFollows();
+    public Task<IEnumerable<string>> GetFollows(string username, [FromQuery] int? latest, [FromQuery] int no = 100);
 }
