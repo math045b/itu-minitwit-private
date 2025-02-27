@@ -1,14 +1,13 @@
-﻿using Api.DataAccess.Models;
-using Api.DataAccess;
+﻿using Api.CustomExceptions;
+using Api.Services.Dto_s;
 using Api.Services.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
 [Route("[Controller]")]
 [ApiController]
-public class RegisterController(MinitwitDbContext db, IPasswordHasher<User> passwordHasher, ILatestService latestService)
+public class RegisterController(IUserService userService, ILatestService latestService)
     : ControllerBase
 {
     [HttpPost]
@@ -41,19 +40,11 @@ public class RegisterController(MinitwitDbContext db, IPasswordHasher<User> pass
             };
         }
 
-        User user = new User
-        {
-            Username = username,
-            Email = email,
-        };
-        user.PwHash = passwordHasher.HashPassword(user, psw);
-
         try
         {
-            db.Users.Add(user);
-            await db.SaveChangesAsync();
+            userService.Register(new CreateUserDTO(){Username = username, Email = email, Password = psw});
         }
-        catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+        catch (UserAlreadyExists)
         {
             return new JsonResult(new { status = 400, error_msg = "The username is already taken" })
             {
