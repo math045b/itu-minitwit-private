@@ -15,8 +15,12 @@ builder.Services.AddSwaggerGen();
 //Repositories
 builder.Services.AddScoped<ILatestRepository, LatestRepository>();
 
+builder.Services.AddScoped<IFollowRepository, FollowRepository>();
+
 //Services
 builder.Services.AddScoped<ILatestService, LatestService>();
+
+builder.Services.AddScoped<IFollowService, FollowService>();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MinitwitDbContext>(options =>
