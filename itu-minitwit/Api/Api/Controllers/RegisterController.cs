@@ -8,7 +8,7 @@ namespace Api.Controllers;
 
 [Route("[Controller]")]
 [ApiController]
-public class RegisterController(MinitwitDbContext db, IPasswordHasher<User> passwordHasher, LatestService latestService)
+public class RegisterController(MinitwitDbContext db, IPasswordHasher<User> passwordHasher, ILatestService latestService)
     : ControllerBase
 {
     [HttpPost]
