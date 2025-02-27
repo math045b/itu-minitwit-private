@@ -1,7 +1,9 @@
 using Api.DataAccess;
+using Api.DataAccess.Models;
 using Api.DataAccess.Repositories;
 using Api.Services.RepositoryInterfaces;
 using Api.Services.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ILatestRepository, LatestRepository>();
 
 //Services
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<ILatestService, LatestService>();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
