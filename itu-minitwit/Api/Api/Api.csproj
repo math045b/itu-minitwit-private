@@ -21,8 +21,4 @@
       <ProjectReference Include="..\Api.Services\Api.Services.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Dto's\" />
-    </ItemGroup>
-
 </Project>
