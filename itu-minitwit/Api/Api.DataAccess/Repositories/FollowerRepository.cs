@@ -1,7 +1,6 @@
 using Api.Services.Exceptions;
 using Api.Services.RepositoryInterfaces;
 using Api.DataAccess.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.DataAccess.Repositories;
