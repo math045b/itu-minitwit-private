@@ -1,7 +1,9 @@
 using Api.DataAccess;
+using Api.DataAccess.Models;
 using Api.DataAccess.Repositories;
 using Api.Services.RepositoryInterfaces;
 using Api.Services.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,15 +14,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
 //Repositories
 builder.Services.AddScoped<ILatestRepository, LatestRepository>();
-
 builder.Services.AddScoped<IFollowRepository, FollowRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 //Services
 builder.Services.AddScoped<ILatestService, LatestService>();
-
 builder.Services.AddScoped<IFollowService, FollowService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MinitwitDbContext>(options =>

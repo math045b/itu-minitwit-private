@@ -12,17 +12,15 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.0" />
         <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Api.DataAccess\Api.DataAccess.csproj" />
       <ProjectReference Include="..\Api.Services\Api.Services.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Dto's\" />
     </ItemGroup>
 
 </Project>
