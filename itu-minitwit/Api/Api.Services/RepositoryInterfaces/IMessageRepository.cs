@@ -4,8 +4,8 @@ namespace Api.Services.RepositoryInterfaces;
 
 public interface IMessageRepository
 {
-    public Task<List<ReadMessageDTO>> ReadMessages();
-    public Task<List<ReadMessageDTO>> ReadFilteredMessages(string username);
+    public Task<List<DisplayMessageDTO>> ReadMessages();
+    public Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize);
 
-    public Task<ReadMessageDTO> PostMessage(string username, string content);
+    public Task<bool> PostMessage(string username, string content);
 }
