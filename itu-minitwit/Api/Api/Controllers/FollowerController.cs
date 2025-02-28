@@ -44,11 +44,11 @@ public class FollowerController(IFollowService followService, ILatestService lat
         }
         catch (UserDoesntExistException e)
         {
-            Console.WriteLine(e.Message);
+            return NotFound(e.Message);
         }
         catch (AlreadyFollowsUserException e)
         {
-            Console.WriteLine(e.Message);
+            return BadRequest(e.Message);
         }
 
         return NoContent();
@@ -62,11 +62,11 @@ public class FollowerController(IFollowService followService, ILatestService lat
         }
         catch (UserDoesntExistException e)
         {
-            Console.WriteLine(e.Message);
+            return NotFound(e.Message);
         }
         catch (AlreadyFollowsUserException e)
         {
-            Console.WriteLine(e.Message);
+            return BadRequest(e.Message);
         }
 
         return NoContent();
