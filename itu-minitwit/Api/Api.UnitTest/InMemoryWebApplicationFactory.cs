@@ -28,6 +28,7 @@ public class InMemoryWebApplicationFactory : WebApplicationFactory<Api.Program>
 
             if (dbConnectionDescriptor != null) services.Remove(dbConnectionDescriptor);
 
+            services.AddControllersWithViews();
             // Create open SqliteConnection so EF won't automatically close it.
             services.AddSingleton<DbConnection>(container =>
             {
