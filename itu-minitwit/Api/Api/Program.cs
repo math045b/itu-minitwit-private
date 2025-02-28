@@ -20,11 +20,14 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<ILatestRepository, LatestRepository>();
 builder.Services.AddScoped<IFollowRepository, FollowRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+
 
 //Services
 builder.Services.AddScoped<ILatestService, LatestService>();
 builder.Services.AddScoped<IFollowService, FollowService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MinitwitDbContext>(options =>
