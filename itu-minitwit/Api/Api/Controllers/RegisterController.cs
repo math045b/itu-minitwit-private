@@ -42,11 +42,18 @@ public class RegisterController(IUserService userService, ILatestService latestS
 
         try
         {
-            userService.Register(new CreateUserDTO(){Username = username, Email = email, Password = psw});
+            userService.Register(new CreateUserDTO() { Username = username, Email = email, Password = psw });
         }
-        catch (UserAlreadyExists)
+        catch (Exception e)
         {
-            return new JsonResult(new { status = 400, error_msg = "The username is already taken" })
+            if (e.InnerException is UserAlreadyExists)
+            {
+                return new JsonResult(new { status = 400, error_msg = "The username is already taken" })
+                {
+                    StatusCode = 400
+                };
+            }
+            return new JsonResult(new { status = 400, error_msg = e.Message })
             {
                 StatusCode = 400
             };
