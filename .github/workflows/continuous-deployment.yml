@@ -22,11 +22,8 @@ jobs:
         with:
           dotnet-version: 8.x
 
-      - name: Restore
-        run: dotnet restore
-
       - name: Build
-        run: dotnet build itu-minitwit/minitwit.web/minitwit.web.csproj 
+        run: dotnet build --no-restore itu-minitwit/minitwit.web/minitwit.web.csproj 
         
       - name: Test
         run: dotnet test
