@@ -79,7 +79,7 @@ public class FollowerController(IFollowService followService, ILatestService lat
         {
             await latestService.UpdateLatest(latest);
 
-            var follows = await followService.GetFollows(username, no);
+            var follows = followService.GetFollows(username, no);
             return Ok(new { follows });
         }
         catch (UserDoesntExistException e)
