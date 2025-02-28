@@ -24,4 +24,10 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="Microsoft.AspNetCore.Mvc.Core">
+        <HintPath>..\..\..\..\..\..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\8.0.13\ref\net8.0\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
