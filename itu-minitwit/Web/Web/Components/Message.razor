@@ -8,7 +8,7 @@
         <div class="d-flex align-items-center">
             <img src="@MessageDto.GravatarUrl" class="rounded-circle me-3" alt="User Image" style="width: 40px; height: 40px;">
             <h5 class="card-title mb-0">
-                <a href="#" class="card-link">@MessageDto.Username</a>
+                <a href="/PrivateTimeline/@MessageDto.Username" class="card-link">@MessageDto.Username</a>
             </h5>
         </div>
         @if (userstate.IsLoggedIn && userstate.Username != MessageDto.Username)
