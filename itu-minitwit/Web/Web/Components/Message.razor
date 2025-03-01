@@ -2,18 +2,20 @@
 @using Web.Services.DTO_s
 
 <div class="card mb-3" style="max-width: 1000px;">
-    <div class="row g-0">
-        <div class="col-md-4">
-            <img src=@MessageDto.GravatarUrl class="img-fluid rounded-start" alt="...">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            <img src="@MessageDto.GravatarUrl" class="rounded-circle me-3" alt="User Image" style="width: 40px; height: 40px;">
+            <h5 class="card-title mb-0">
+                <a href="#" class="card-link">@MessageDto.Username</a>
+            </h5>
         </div>
-        <div class="col-md-8">
-            <div class="card-body">
-                <h5 class="card-title"><a href="#" class="card-link">@MessageDto.Username</a></h5>
-                <p class="card-text">@MessageDto.Message</p>
-                <p class="card-text"><small class="text-body-secondary">@MessageDto.PubDate</small></p>
-                <a href="#" class="card-link">Follow/Unfollow</a>
-            </div>
-        </div>
+        <button class="btn btn-primary">Follow/Unfollow</button>
+    </div>
+    <div class="card-body">
+        <p class="card-text">@MessageDto.Message</p>
+        <p class="card-text">
+            <small class="text-body-secondary">@MessageDto.PubDate</small>
+        </p>
     </div>
 </div>
 
