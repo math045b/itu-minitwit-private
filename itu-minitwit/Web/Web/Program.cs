@@ -8,6 +8,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<UserState>();
+builder.Services.AddScoped<IFollowService, FollowService>();
 
 
 var app = builder.Build();

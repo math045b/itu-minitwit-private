@@ -11,6 +11,8 @@ public class MessageBase : ComponentBase
         "Mr. Test", "test@test.com", DateTime.Now);
 
     [Inject] protected UserState userstate { get; set; }
+    
+    [Inject] protected IFollowService FollowService { get; set; }
 
     [Inject] private NavigationManager Navigation { get; set; }
 
@@ -20,15 +22,15 @@ public class MessageBase : ComponentBase
         return new Random().Next(2) % 2 == 0;
     }
 
-    protected void Follow()
+    protected async Task Follow()
     {
-        //TODO: implement
+        await FollowService.Follow(userstate.Username, MessageDto.Username);
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 
-    protected void Unfollow()
+    protected async Task Unfollow()
     {
-        //TODO: implement
+        await FollowService.UnFollow(userstate.Username, MessageDto.Username);
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 }
