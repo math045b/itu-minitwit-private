@@ -26,13 +26,13 @@ public class MessageController(IMessageService db, ILatestService latestService)
         await latestService.UpdateLatest(1);
         try
         {
-            var filtered_messages = await db.ReadFilteredMessages(username, 100);
-            if (filtered_messages.Count == 0)
+            var filteredMessages = await db.ReadFilteredMessages(username, 100);
+            if (filteredMessages.Count == 0)
             {
                 return NoContent();
 
             }
-            return Ok(filtered_messages);
+            return Ok(filteredMessages);
         }
         catch (KeyNotFoundException e)
         {
