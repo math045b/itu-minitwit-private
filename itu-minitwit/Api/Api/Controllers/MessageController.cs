@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Api.Services.Services;
-using Newtonsoft.Json;
 
 namespace itu_minitwit.Controllers;
 
@@ -50,7 +49,6 @@ public class MessageController(IMessageService db, ILatestService latestService)
         try
         {
             await db.PostMessage(username, content);
-            TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "Your message was recorded." });
             return NoContent();
         }
         catch (KeyNotFoundException e)
