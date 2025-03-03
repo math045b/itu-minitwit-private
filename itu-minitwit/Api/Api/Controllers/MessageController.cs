@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Api.Services.Services;
-using Newtonsoft.Json;
 
 namespace itu_minitwit.Controllers;
 
@@ -14,7 +13,7 @@ public class MessageController(IMessageService db, ILatestService latestService)
     {
         await latestService.UpdateLatest(latest);
 
-        var messages = db.ReadMessages();
+        var messages = db.ReadMessages().Result;
 
         return Json(messages);
     }
@@ -27,13 +26,13 @@ public class MessageController(IMessageService db, ILatestService latestService)
         await latestService.UpdateLatest(1);
         try
         {
-            var filtered_messages = await db.ReadFilteredMessages(username, 100);
-            if (filtered_messages.Count == 0)
+            var filteredMessages = await db.ReadFilteredMessages(username, 100);
+            if (filteredMessages.Count == 0)
             {
                 return NoContent();
 
             }
-            return Ok(filtered_messages);
+            return Ok(filteredMessages);
         }
         catch (KeyNotFoundException e)
         {
@@ -50,7 +49,6 @@ public class MessageController(IMessageService db, ILatestService latestService)
         try
         {
             await db.PostMessage(username, content);
-            TempData["FlashMessages"] = JsonConvert.SerializeObject(new List<string> { "Your message was recorded." });
             return NoContent();
         }
         catch (KeyNotFoundException e)

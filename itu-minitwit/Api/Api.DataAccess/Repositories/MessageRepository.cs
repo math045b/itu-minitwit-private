@@ -15,6 +15,7 @@ public class MessageRepository(MinitwitDbContext dbContext) : IMessageRepository
                 a => a.UserId,
                 (m,a) => new DisplayMessageDTO {Username = a.Username, Text = m.Text, PubDate = m.PubDate}
             )
+            .OrderByDescending(displayMessage => displayMessage.PubDate)
             .Take(100)
             .ToListAsync();
     }
