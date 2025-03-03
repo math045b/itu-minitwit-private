@@ -13,7 +13,7 @@ public class MessageController(IMessageService db, ILatestService latestService)
     {
         await latestService.UpdateLatest(latest);
 
-        var messages = db.ReadMessages();
+        var messages = db.ReadMessages().Result;
 
         return Json(messages);
     }
