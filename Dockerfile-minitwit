@@ -27,8 +27,6 @@ WORKDIR /itu-minitwit/minitwit.web
 COPY --from=build /out ./
 
 # Copy the database file and set permissions
-COPY itu-minitwit/minitwit.web/minitwit.db ./
-RUN chmod 664 minitwit.db && chown www-data:www-data minitwit.db
 
 
 # Set environment variable to listen on port 8080
