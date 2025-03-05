@@ -18,8 +18,7 @@ public class MessageBase : ComponentBase
 
     protected bool DoseLoggedInUserFollowUser()
     {
-        //TODO: implement
-        return new Random().Next(2) % 2 == 0;
+        return FollowService.DoesFollow(userstate.Username, MessageDto.Username).Result;
     }
 
     protected async Task Follow()
