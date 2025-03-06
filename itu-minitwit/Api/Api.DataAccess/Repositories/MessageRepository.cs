@@ -26,7 +26,7 @@ public class MessageRepository(MinitwitDbContext dbContext) : IMessageRepository
         var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
         if (user == null)
         {
-            throw new KeyNotFoundException("User not found");
+            throw new KeyNotFoundException($"User not found - Username: \"{username}\"");
         }
         
         return dbContext.Messages
