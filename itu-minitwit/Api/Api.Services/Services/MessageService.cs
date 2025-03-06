@@ -17,7 +17,8 @@ public class MessageService(IMessageRepository repository) : IMessageService
     {
         return repository.ReadMessages();
     }
-
+    
+    [LogMethodParameters]
     public Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize)
     {
         return repository.ReadFilteredMessages(username, pagesize);

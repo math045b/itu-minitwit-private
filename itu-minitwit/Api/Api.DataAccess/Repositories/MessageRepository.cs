@@ -1,4 +1,5 @@
 using Api.DataAccess.Models;
+using Api.Services;
 using Api.Services.Dto_s.MessageDTO_s;
 using Api.Services.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ public class MessageRepository(MinitwitDbContext dbContext) : IMessageRepository
             .ToListAsync();
     }
 
+    [LogMethodParameters]
     public Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize = 100)
     {
         var pageSize = pagesize;
