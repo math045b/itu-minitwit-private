@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Filters;
+using Serilog.Templates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,43 +38,46 @@ builder.Services.AddDbContext<MinitwitDbContext>(options =>
 
 // Configure Serilog
 var logFolder = builder.Configuration["LogLocation:LogFolder"];
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()  // Log to console
+var  outputTemplate = new ExpressionTemplate("[{@t:HH:mm:ss} {@l:u3} {Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)}] {@m}\n{@x}");
+var logger = new LoggerConfiguration()
+    // Log to console
+    .WriteTo.Console(outputTemplate)
+    .Enrich.FromLogContext()
     //log everything to a file
-    .WriteTo.File($"{logFolder}/general/api_log-.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(outputTemplate,$"{logFolder}/all/all/api_log-.txt", rollingInterval: RollingInterval.Day)
     //log errors to a separate file as well
-    .WriteTo.File($"{logFolder}logs/errors/api_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)  
-    //filter to log things from the follow related namespaces
+    .WriteTo.File(outputTemplate, $"{logFolder}/all/errors/api_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)  
+    //filter to log things from the follow related code
     .WriteTo.Logger(lc => lc
         .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") &&
-                                     (e.Properties["SourceContext"].ToString().Contains("Api.Controllers.FollowerController") ||
-                                      e.Properties["SourceContext"].ToString().Contains("Api.Services.Services.FollowService") ||
-                                      e.Properties["SourceContext"].ToString().Contains("Api.DataAccess.Repositories.FollowRepository")))
-        .WriteTo.File($"{logFolder}/follow/general/follow_log-.txt", rollingInterval: RollingInterval.Day)
-        .WriteTo.File($"{logFolder}/follow/errors/follow_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
-    //filter to log things from the message related namespaces
+                                     (e.Properties["SourceContext"].ToString().Contains("FollowerController") ||
+                                      e.Properties["SourceContext"].ToString().Contains("FollowService") ||
+                                      e.Properties["SourceContext"].ToString().Contains("FollowRepository")))
+        .WriteTo.File(outputTemplate, $"{logFolder}/follow/all/follow_log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File(outputTemplate, $"{logFolder}/follow/errors/follow_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
+    //filter to log things from the message related code
     .WriteTo.Logger(lc => lc
         .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") &&
-                                     (e.Properties["SourceContext"].ToString().Contains("Api.Controllers.MessageController") ||
-                                      e.Properties["SourceContext"].ToString().Contains("Api.Services.Services.MessageService") ||
-                                      e.Properties["SourceContext"].ToString().Contains("Api.DataAccess.Repositories.MessageRepository")))
-        .WriteTo.File($"{logFolder}/message/general/message_log-.txt", rollingInterval: RollingInterval.Day)
-        .WriteTo.File($"{logFolder}/message/errors/message_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
-    //filter to log things from the user related namespaces
+                                     (e.Properties["SourceContext"].ToString().Contains("MessageController") ||
+                                      e.Properties["SourceContext"].ToString().Contains("MessageService") ||
+                                      e.Properties["SourceContext"].ToString().Contains("MessageRepository")))
+        .WriteTo.File(outputTemplate, $"{logFolder}/message/all/message_log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File(outputTemplate, $"{logFolder}/message/errors/message_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
+    //filter to log things from the user related code
     .WriteTo.Logger(lc => lc
         .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") &&
-                                     (e.Properties["SourceContext"].ToString().Contains("Api.Controllers.RegisterController") ||
-                                      e.Properties["SourceContext"].ToString().Contains("Api.Services.Services.UserService") ||
-                                      e.Properties["SourceContext"].ToString().Contains("Api.DataAccess.Repositories.UserRepository")))
-        .WriteTo.File($"{logFolder}/user/general/user_log-.txt", rollingInterval: RollingInterval.Day)
-        .WriteTo.File($"{logFolder}/user/errors/user_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
+                                     (e.Properties["SourceContext"].ToString().Contains("RegisterController") ||
+                                      e.Properties["SourceContext"].ToString().Contains("UserService") ||
+                                      e.Properties["SourceContext"].ToString().Contains("UserRepository")))
+        .WriteTo.File(outputTemplate, $"{logFolder}/user/all/user_log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File(outputTemplate, $"{logFolder}/user/errors/user_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
     .CreateLogger();
 
 // Add Serilog to .NET logging system
+Log.Logger = logger;
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
 builder.Host.UseSerilog();
-
 
 var app = builder.Build();
 
@@ -83,6 +87,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
