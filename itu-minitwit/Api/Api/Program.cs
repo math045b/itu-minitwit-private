@@ -5,6 +5,7 @@ using Api.Services.RepositoryInterfaces;
 using Api.Services.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
