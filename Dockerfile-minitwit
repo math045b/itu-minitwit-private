@@ -27,7 +27,7 @@ WORKDIR /itu-minitwit/minitwit.web
 COPY --from=build /out ./
 
 # Copy the database file and set permissions
-
+RUN mkdir -p ./data
 
 # Set environment variable to listen on port 8080
 ENV ASPNETCORE_URLS=http://+:8080
