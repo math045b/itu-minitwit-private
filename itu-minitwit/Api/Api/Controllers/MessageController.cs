@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using Api.Services.Services;
+using Microsoft.AspNetCore.Mvc;
 
-namespace itu_minitwit.Controllers;
+namespace Api.Controllers;
 
 [Route("/")]
 public class MessageController(IMessageService db, ILatestService latestService) : Controller
