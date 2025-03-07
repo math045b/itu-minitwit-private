@@ -11,12 +11,11 @@ public class RegisterController(IUserService userService, ILatestService latestS
     : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult> Register([FromForm] string? username, [FromForm] string? email,
-        [FromForm] string? psw, [FromQuery] int? latest)
+    public async Task<ActionResult> Register([FromBody] CreateUserDTO request, [FromQuery] int? latest)
     {
         await latestService.UpdateLatest(latest);
 
-        if (string.IsNullOrWhiteSpace(username))
+        if (string.IsNullOrWhiteSpace(request.Username))
         {
             return new JsonResult(new { status = 400, error_msg = "You have to enter a username" })
             {
@@ -24,7 +23,7 @@ public class RegisterController(IUserService userService, ILatestService latestS
             };
         }
 
-        if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
+        if (string.IsNullOrWhiteSpace(request.Email) || !request.Email.Contains('@'))
         {
             return new JsonResult(new { status = 400, error_msg = "You have to enter a valid email address" })
             {
@@ -32,7 +31,7 @@ public class RegisterController(IUserService userService, ILatestService latestS
             };
         }
 
-        if (string.IsNullOrWhiteSpace(psw))
+        if (string.IsNullOrWhiteSpace(request.Pwd))
         {
             return new JsonResult(new { status = 400, error_msg = "You have to enter a password" })
             {
@@ -42,7 +41,7 @@ public class RegisterController(IUserService userService, ILatestService latestS
 
         try
         {
-            userService.Register(new CreateUserDTO() { Username = username, Email = email, Password = psw });
+            userService.Register(new CreateUserDTO() { Username = request.Username, Email = request.Email, Pwd = request.Pwd });
         }
         catch (Exception e)
         {

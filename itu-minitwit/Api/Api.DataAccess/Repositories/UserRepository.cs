@@ -15,7 +15,7 @@ public class UserRepository(MinitwitDbContext db, IPasswordHasher<User> password
             Username = createUserDto.Username,
             Email = createUserDto.Email,
         };
-        user.PwHash = passwordHasher.HashPassword(user, createUserDto.Password);
+        user.PwHash = passwordHasher.HashPassword(user, createUserDto.Pwd);
 
         try
         {
