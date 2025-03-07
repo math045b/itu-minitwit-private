@@ -2,15 +2,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Set working directory
-WORKDIR /itu-minitwit/Api/Api/
+WORKDIR /app
 
 # Copy project file(s) and restore dependencies
-COPY /itu-minitwit/Api/*.csproj ./
-RUN dotnet restore
+COPY itu-minitwit/Api/Api.DataAccess/*.csproj ./Api.DataAccess/
+COPY itu-minitwit/Api/Api.Services/*.csproj ./Api.Services/
+COPY itu-minitwit/Api/Api/*.csproj ./Api/
 
 # Copy the rest of the application source code
-COPY /itu-minitwit/Api/ ./
-
+WORKDIR /app/Api
+RUN dotnet restore
 # Build and publish the application
 RUN dotnet publish -c Release -o /out
 
