@@ -9,6 +9,15 @@ COPY ./itu-minitwit/Api/Api.DataAccess/*.csproj ./Api.DataAccess/
 COPY ./itu-minitwit/Api/Api.Services/*.csproj ./Api.Services/
 COPY ./itu-minitwit/Api/Api/*.csproj ./Api/
 
+COPY ./itu-minitwit/Api/Api.DataAccess/ ./Api.DataAccess/
+COPY /itu-minitwit/Api/Api.Services/ ./Api.Services/
+COPY /itu-minitwit/Api/Api/ ./Api/
+
+
+
+
+
+
 # Copy the rest of the application source code
 WORKDIR /app/Api
 RUN dotnet restore --no-cache
