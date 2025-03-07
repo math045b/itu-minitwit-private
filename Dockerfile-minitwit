@@ -1,0 +1,37 @@
+# Use .NET SDK image to build the project
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+# Set working directory
+WORKDIR /itu-minitwit/minitwit.web
+
+# Copy project file(s) and restore dependencies
+COPY /itu-minitwit/minitwit.web/*.csproj ./
+RUN dotnet restore
+
+# Copy the rest of the application source code
+COPY /itu-minitwit/minitwit.web/ ./
+
+# Build and publish the application
+RUN dotnet publish -c Release -o /out
+
+# Use .NET runtime image for final container
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+# Install SQLite
+RUN apt update && apt install -y sqlite3
+
+# Set working directory
+WORKDIR /itu-minitwit/minitwit.web
+
+# Copy published files from build stage
+COPY --from=build /out ./
+
+# Copy the database file and set permissions
+RUN mkdir -p ./data
+
+# Set environment variable to listen on port 8080
+ENV ASPNETCORE_URLS=http://+:8080
+
+
+# Set entrypoint to run the app
+ENTRYPOINT ["dotnet", "minitwit.web.dll"]

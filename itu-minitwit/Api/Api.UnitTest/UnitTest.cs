@@ -63,7 +63,6 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
 
         var response = await client.GetAsync("/msgs");
         var json = await response.Content.ReadAsStringAsync();
-        using var doc = JsonDocument.Parse(json);
         var messageResponse = JsonConvert.DeserializeObject<List<MessageDto>>(json);
 
         Assert.Equal(messageResponse!.First().Text, msg.Text);
