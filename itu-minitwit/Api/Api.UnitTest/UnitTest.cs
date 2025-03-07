@@ -1,5 +1,6 @@
 using System.Data.Entity;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using Api.DataAccess.Models;
 using Api.Services.Dto_s.MessageDTO_s;
@@ -63,9 +64,9 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         var response = await client.GetAsync("/msgs");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
-        var messageResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
+        var messageResponse = JsonConvert.DeserializeObject<List<MessageDto>>(json);
 
-        Assert.Equal(messageResponse!.Messages.First().Text, msg.Text);
+        Assert.Equal(messageResponse!.First().Text, msg.Text);
     }
     
     [Fact]
@@ -293,12 +294,14 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task Register_UsernameValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", ""),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+        
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -313,12 +316,14 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task Register_EmailValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test.com",
+            pwd = "test123!"
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -333,12 +338,14 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task Register_PasswordValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", ""),
+            username = "test",
+            email = "test@test.com",
+            pwd = ""
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -363,13 +370,15 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         };
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync();
-
-        var content = new FormUrlEncodedContent(new[]
+        
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+        
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -385,12 +394,14 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     public async Task Register_RegistersUser_StatusCode200()
     {
         var dbContext = fixture.GetDbContext();
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+        
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
