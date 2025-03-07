@@ -49,7 +49,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
     }
 
     [LogMethodParameters]
-    [LogReturnValue]
+    [LogReturnValueAsync]
     [IgnoreAntiforgeryToken]
     [HttpPost("msgs/{username}")]
     public async Task<IActionResult> PostMessage(string username, [FromForm] string content)
@@ -61,6 +61,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
         }
         catch (KeyNotFoundException e)
         {
+            logger.LogError(e, "ERROR: Couldn't find key");
             return NotFound(new { message = e.Message });
         }
     }
