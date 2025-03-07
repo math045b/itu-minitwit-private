@@ -1,5 +1,5 @@
-﻿using Api.CustomExceptions;
-using Api.Services;
+﻿using Api.Services;
+using Api.Services.CustomExceptions;
 using Api.Services.Dto_s;
 using Api.Services.Services;
 using Microsoft.AspNetCore.Mvc;

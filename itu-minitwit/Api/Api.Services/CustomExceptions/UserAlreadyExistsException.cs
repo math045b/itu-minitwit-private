@@ -1,4 +1,4 @@
-﻿namespace Api.CustomExceptions;
+﻿namespace Api.Services.CustomExceptions;
 
 /// <summary>
 /// Exception to be thrown if some User already exist in the database
