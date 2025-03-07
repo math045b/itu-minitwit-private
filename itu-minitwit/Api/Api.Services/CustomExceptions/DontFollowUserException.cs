@@ -1,16 +1,16 @@
 namespace Api.Services.CustomExceptions;
 
-public class DotFollowUserException: Exception
+public class DontFollowUserException: Exception
 {
-    public DotFollowUserException()
+    public DontFollowUserException()
     {
     }
 
-    public DotFollowUserException(string message) : base(message)
+    public DontFollowUserException(string message) : base(message)
     {
     }
 
-    public DotFollowUserException(string message, Exception innerException) : base(message, innerException)
+    public DontFollowUserException(string message, Exception innerException) : base(message, innerException)
     {
     }
 }
