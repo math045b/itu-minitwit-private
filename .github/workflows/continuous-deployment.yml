@@ -25,6 +25,9 @@ jobs:
       - name: Build
         run: dotnet build itu-minitwit/minitwit.web
         
+      - name: Build
+        run: dotnet build itu-minitwit/Api/Api
+        
       - name: Test
         run: dotnet test --verbosity normal itu-minitwit
       
@@ -46,7 +49,17 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwitimage:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
-
+      
+      - name: Build and push minitwitapi
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile-Api
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/minitwitapi:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitapi:webbuildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitapi:webbuildcache,mode=max
+      
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
