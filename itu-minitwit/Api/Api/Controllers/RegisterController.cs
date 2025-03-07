@@ -24,7 +24,7 @@ public class RegisterController(IUserService userService, ILatestService latestS
 
             if (string.IsNullOrWhiteSpace(username))
             {
-                logger.LogError($"Invalid username: {username}");
+                logger.LogError($"Invalid username: \"{username}\"");
                 return new JsonResult(new { status = 400, error_msg = "You have to enter a username" })
                 {
                     StatusCode = 400
@@ -33,7 +33,7 @@ public class RegisterController(IUserService userService, ILatestService latestS
 
             if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
             {
-                logger.LogError($"Invalid email: {email}");
+                logger.LogError($"Invalid email: \"{email}\"");
                 return new JsonResult(new { status = 400, error_msg = "You have to enter a valid email address" })
                 {
                     StatusCode = 400
@@ -42,7 +42,7 @@ public class RegisterController(IUserService userService, ILatestService latestS
 
             if (string.IsNullOrWhiteSpace(psw))
             {
-                logger.LogError($"Invalid password {psw}");
+                logger.LogError($"Invalid password: \"{psw}\"");
                 return new JsonResult(new { status = 400, error_msg = "You have to enter a password" })
                 {
                     StatusCode = 400
@@ -55,7 +55,7 @@ public class RegisterController(IUserService userService, ILatestService latestS
             }
             catch (UserAlreadyExists e)
             {
-                logger.LogError(e, $"User {username} is already registered");
+                logger.LogError(e, $"User \"{username}\" is already registered");
                 return new JsonResult(new { status = 400, error_msg = "The username is already taken" })
                 {
                     StatusCode = 400
