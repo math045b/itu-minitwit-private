@@ -25,6 +25,9 @@ jobs:
       - name: Build
         run: dotnet build itu-minitwit/minitwit.web
         
+      - name: Build
+        run: dotnet build itu-minitwit/Api/Api
+        
       - name: Test
         run: dotnet test --verbosity normal itu-minitwit
       
