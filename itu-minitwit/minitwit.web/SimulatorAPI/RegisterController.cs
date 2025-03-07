@@ -10,12 +10,11 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
     : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult> Register([FromForm] string? username, [FromForm] string? email,
-        [FromForm] string? psw, [FromQuery] int? latest)
+    public async Task<ActionResult> Register([FromBody] RegisterRequestModel request, [FromQuery] int? latest)
     {
         await latestService.UpdateLatest(latest);
 
-        if (string.IsNullOrWhiteSpace(username))
+        if (string.IsNullOrWhiteSpace(request.username))
         {
             return new JsonResult(new { status = 400, error_msg = "You have to enter a username" })
             {
@@ -23,7 +22,7 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
             };
         }
 
-        if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
+        if (string.IsNullOrWhiteSpace(request.email) || !request.email.Contains('@'))
         {
             return new JsonResult(new { status = 400, error_msg = "You have to enter a valid email address" })
             {
@@ -31,7 +30,7 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
             };
         }
 
-        if (string.IsNullOrWhiteSpace(psw))
+        if (string.IsNullOrWhiteSpace(request.pwd))
         {
             return new JsonResult(new { status = 400, error_msg = "You have to enter a password" })
             {
@@ -41,10 +40,10 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
 
         User user = new User
         {
-            Username = username,
-            Email = email,
+            Username = request.username,
+            Email = request.email,
         };
-        user.PwHash = passwordHasher.HashPassword(user, psw);
+        user.PwHash = passwordHasher.HashPassword(user, request.pwd);
 
         try
         {
@@ -61,4 +60,11 @@ public class RegisterController(MiniTwitDbContext db, IPasswordHasher<User> pass
 
         return Ok("");
     }
+}
+
+public class RegisterRequestModel
+{
+    public string username { get; set; }
+    public string email { get; set; }
+    public string pwd { get; set; }
 }
