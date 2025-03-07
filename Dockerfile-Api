@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /itu-minitwit/minitwit.Api
 
 # Copy project file(s) and restore dependencies
-COPY /itu-minitwit/Api/*.csproj ./
+COPY /itu-minitwit/Api/Api/*.csproj ./
 RUN dotnet restore
 
 # Copy the rest of the application source code
