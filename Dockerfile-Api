@@ -2,11 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Set working directory
-WORKDIR /itu-minitwit/minitwit.Api
+WORKDIR /itu-minitwit/Api/Api/
 
 # Copy project file(s) and restore dependencies
 COPY /itu-minitwit/Api/*.csproj ./
-WORKDIR /itu-minitwit/Api/Api/
 RUN dotnet restore
 
 # Copy the rest of the application source code
