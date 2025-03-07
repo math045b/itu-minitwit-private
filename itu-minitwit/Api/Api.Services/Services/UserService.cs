@@ -5,13 +5,15 @@ namespace Api.Services.Services;
 
 public interface IUserService
 {
-    public ReadUserDTO Register(CreateUserDTO createUserDto);
+    public Task<ReadUserDTO> Register(CreateUserDTO createUserDto);
 }
 
 public class UserService(IUserRepository userRepository) : IUserService
 {
-    public ReadUserDTO Register(CreateUserDTO createUserDto)
+    [LogMethodParameters]
+    [LogReturnValue]
+    public Task<ReadUserDTO> Register(CreateUserDTO createUserDto)
     {
-        return userRepository.Register(createUserDto).Result;
+        return userRepository.Register(createUserDto);
     }
 }
