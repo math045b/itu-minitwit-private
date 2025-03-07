@@ -60,7 +60,7 @@ public class LogMethodParametersAttribute : Attribute, IMethodAdvice
         var sourceContext = context.TargetMethod.DeclaringType?.FullName ?? "UnknownSource";
         using (LogContext.PushProperty("SourceContext", sourceContext))
         {
-            Log.Information("Method Called: {MethodName}({Arguments})}", 
+            Log.Information("Method Called: {MethodName}({Arguments})", 
                 methodName, argsString);
         
         }
