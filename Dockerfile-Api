@@ -11,7 +11,7 @@ COPY itu-minitwit/Api/Api/*.csproj ./Api/
 
 # Copy the rest of the application source code
 WORKDIR /app/Api
-RUN dotnet restore
+RUN dotnet restore --no-cache
 # Build and publish the application
 RUN dotnet publish -c Release -o /out
 
