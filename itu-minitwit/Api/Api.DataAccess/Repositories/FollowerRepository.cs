@@ -1,6 +1,7 @@
 using Api.Services.Exceptions;
 using Api.Services.RepositoryInterfaces;
 using Api.DataAccess.Models;
+using Api.Services.CustomExceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.DataAccess.Repositories;
@@ -40,7 +41,7 @@ public class FollowRepository(MinitwitDbContext dbContext) : IFollowRepository
             dbContext.Followers.FirstOrDefault(f => f.WhoId == user!.UserId
                                                     && f.WhomId == userToUnfollow!.UserId);
     
-        if (followRelation == null) throw new AlreadyFollowsUserException("You already unfollow that user");
+        if (followRelation == null) throw new ("You already unfollow that user");
     
         dbContext.Followers.Remove(followRelation);
         await dbContext.SaveChangesAsync();
