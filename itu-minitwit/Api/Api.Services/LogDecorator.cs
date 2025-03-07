@@ -50,7 +50,6 @@ public class LogMethodParametersAttribute : Attribute, IMethodAdvice
         // Get the current method info
         MethodBase method = context.TargetMethod;
         var methodName = $"{method.Name}";
-        var methodClass = method.DeclaringType?.FullName; 
         
         // Get method arguments
         var args = method.GetParameters()
@@ -61,8 +60,8 @@ public class LogMethodParametersAttribute : Attribute, IMethodAdvice
         var sourceContext = context.TargetMethod.DeclaringType?.FullName ?? "UnknownSource";
         using (LogContext.PushProperty("SourceContext", sourceContext))
         {
-            Log.Information("Method Called: {MethodName}({Arguments}) in {MethodClass}", 
-                methodName, argsString, methodClass);
+            Log.Information("Method Called: {MethodName}({Arguments})}", 
+                methodName, argsString);
         
         }
         

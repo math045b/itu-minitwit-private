@@ -13,13 +13,21 @@ public class MessageController(IMessageService db, ILatestService latestService,
     [HttpGet("msgs")]
     public async Task<IActionResult> GetMessages([FromQuery] int? latest)
     {
-        logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
-        await latestService.UpdateLatest(latest);
-        var messages = db.ReadMessages().Result;
-        logger.LogInformation($"Message count: {messages.Count}");
-        logger.LogInformation($"First message: {messages.First()}");
-        logger.LogInformation($"Last message: {messages.Last()}");
-        return Ok(messages);
+        try
+        {
+            logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
+            await latestService.UpdateLatest(latest);
+            var messages = db.ReadMessages().Result;
+            logger.LogInformation($"Message count: {messages.Count}");
+            logger.LogInformation($"First message: {messages.First()}");
+            logger.LogInformation($"Last message: {messages.Last()}");
+            return Ok(messages);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "ERROR: An error occured, that we did have not accounted for");
+            return StatusCode(500, "An error occured, that we did not for see");
+        }
     }
 
     [LogMethodParameters]
@@ -46,6 +54,11 @@ public class MessageController(IMessageService db, ILatestService latestService,
             logger.LogError(e, "ERROR: Couldn't find key");
             return NotFound(new { message = e.Message });
         }
+        catch (Exception e)
+        {
+            logger.LogError(e, "ERROR: An error occured, that we did have not accounted for");
+            return StatusCode(500, "An error occured, that we did not for see");
+        }
     }
 
     [LogMethodParameters]
@@ -63,6 +76,11 @@ public class MessageController(IMessageService db, ILatestService latestService,
         {
             logger.LogError(e, "ERROR: Couldn't find key");
             return NotFound(new { message = e.Message });
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "ERROR: An error occured, that we did have not accounted for");
+            return StatusCode(500, "An error occured, that we did not for see");
         }
     }
 }
