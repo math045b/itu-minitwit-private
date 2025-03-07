@@ -29,9 +29,9 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
         var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
         if (user == null)
         {
-            logger.LogError($"User \"{username}\" not found");
-            logger.LogError("KeyNotFoundException thrown:");
-            throw new KeyNotFoundException($"User not found - Username: \"{username}\"");
+            var e = new KeyNotFoundException($"User \"{username}\" found");
+            logger.LogError($"{e.Message} - throw: {e.GetType()}");
+            throw e;
         }
         
         return dbContext.Messages
@@ -56,9 +56,9 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
         
         if (user == null)
         {
-            logger.LogError($"User \"{username}\" not found");
-            logger.LogError("KeyNotFoundException thrown:");
-            throw new KeyNotFoundException($"User not found - Username: \"{username}\"");
+            var e = new KeyNotFoundException($"User \"{username}\" found");
+            logger.LogError($"{e.Message} - throw: {e.GetType()}");
+            throw e;
         }
         
         var message = new Message
