@@ -25,7 +25,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
         }
         catch (Exception e)
         {
-            logger.LogError(e, "ERROR: An error occured, that we did have not accounted for");
+            logger.LogError(e, "An error occured, that we did have not accounted for");
             return StatusCode(500, "An error occured, that we did not for see");
         }
     }
@@ -51,12 +51,12 @@ public class MessageController(IMessageService db, ILatestService latestService,
         }
         catch (KeyNotFoundException e)
         {
-            logger.LogError(e, "ERROR: Couldn't find key");
+            logger.LogError(e, "Couldn't find key");
             return NotFound(new { message = e.Message });
         }
         catch (Exception e)
         {
-            logger.LogError(e, "ERROR: An error occured, that we did have not accounted for");
+            logger.LogError(e, "An error occured, that we did have not accounted for");
             return StatusCode(500, "An error occured, that we did not for see");
         }
     }
@@ -74,12 +74,12 @@ public class MessageController(IMessageService db, ILatestService latestService,
         }
         catch (KeyNotFoundException e)
         {
-            logger.LogError(e, "ERROR: Couldn't find key");
+            logger.LogError(e, "Couldn't find key");
             return NotFound(new { message = e.Message });
         }
         catch (Exception e)
         {
-            logger.LogError(e, "ERROR: An error occured, that we did have not accounted for");
+            logger.LogError(e, "An error occured, that we did have not accounted for");
             return StatusCode(500, "An error occured, that we did not for see");
         }
     }
