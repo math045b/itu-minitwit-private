@@ -1,4 +1,5 @@
 using Api.DataAccess.Models;
+using Api.Services.Dto_s.FollowDTO_s;
 using Api.Services.Exceptions;
 using Api.Services.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -10,27 +11,27 @@ namespace Api.Controllers;
 public class FollowerController(IFollowService followService, ILatestService latestService) : ControllerBase
 {
     [HttpPost("/fllws/{username}")]
-    public async Task<ActionResult> FollowOrUnfollow(string username, [FromForm] string? follow, [FromForm] string? unfollow, [FromQuery] int? latest)
+    public async Task<ActionResult> FollowOrUnfollow(string username, [FromBody] FollowDTO followDto, [FromQuery] int? latest)
     {
         await latestService.UpdateLatest(latest);
         
-        if (follow != null)
+        if (followDto.Follow != null)
         {
-            if (username == follow)
+            if (username == followDto.Follow)
             {
                 return BadRequest("You cannot follow yourself");
             }
             
-            return await Follow(username, follow);
+            return await Follow(username, followDto.Follow);
         }
-        if (unfollow != null)
+        if (followDto.Unfollow != null)
         {
-            if (username == unfollow)
+            if (username == followDto.Unfollow)
             {
                 return BadRequest("You cannot follow yourself");
             }
             
-            return await Unfollow(username, unfollow);
+            return await Unfollow(username, followDto.Unfollow);
         }
 
         return BadRequest("You must provide a user to follow or unfollow");
