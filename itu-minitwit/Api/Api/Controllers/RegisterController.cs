@@ -58,6 +58,6 @@ public class RegisterController(IUserService userService, ILatestService latestS
             };
         }
 
-        return Ok("");
+        return NoContent();
     }
 }
