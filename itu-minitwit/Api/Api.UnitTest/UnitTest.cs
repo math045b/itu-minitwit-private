@@ -124,18 +124,32 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         await context.SaveChangesAsync();
 
         var content = "Hello from Man";
-        
+    
+        var messageDto = new CreateMessageDTO
+        {
+            Content = "Hello from Man"
+        };
+
+        var jsonContent = new StringContent(
+            JsonConvert.SerializeObject(messageDto),
+            Encoding.UTF8,
+            "application/json"
+        );
+    
         // Act
-        var response = await client.PostAsync("/msgs/Man", new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("content", content) }));
+        var response = await client.PostAsync("/msgs/Man", jsonContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent); // Expecting 204 No Content
+
         var savedMessage = await Task.Run(() =>
             context.Messages.AsQueryable().SingleOrDefault(m => m.AuthorId == user.UserId)
         );
-        savedMessage.Should().NotBeNull();
+
+        savedMessage.Should().NotBeNull(); 
         savedMessage.Text.Should().Be(content);
     }
+
     
     public class MessageDto
     {
@@ -404,7 +418,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
 
         var response = await client.PostAsync("/register", content);
 
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         var user = dbContext.Users.FirstOrDefault(user => user.Username == "test");
         Assert.NotNull(user);
     }
