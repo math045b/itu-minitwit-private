@@ -9,7 +9,7 @@ public class MessageViewBase : ComponentBase
     //
     // [Parameter] public int page { get; set; } = 1;
 
-    [Parameter] public IEnumerable<DisplayMessageDto> Messages { get; set; } = null;
+    [Parameter] public IEnumerable<DisplayMessageDto> Messages { get; set; } = new List<DisplayMessageDto>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -20,7 +20,7 @@ public class MessageViewBase : ComponentBase
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras cursus justo ante, et sollicitudin arcu mollis sit amet. Sed luctus tempor nisi et dignissim. Etia",
                 "Mr. Test", "test@test.com", DateTime.Now));
         }
-
+        
         Messages = messages;
     }
 }
