@@ -1,5 +1,5 @@
-using Api.CustomExceptions;
 using Api.DataAccess.Models;
+using Api.Services.CustomExceptions;
 using Api.Services.Dto_s;
 using Api.Services.RepositoryInterfaces;
 using Microsoft.AspNetCore.Identity;
