@@ -1,16 +1,14 @@
 name: continuous-deployment.yml
 on:
-  push:
-    branches:
-      - create-workflow
   pull_request:
+    types: [closed]
     branches:
       - main
   workflow_dispatch:
-    manual: true
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     
     steps:
