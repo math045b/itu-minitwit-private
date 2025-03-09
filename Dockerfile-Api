@@ -28,6 +28,9 @@ RUN dotnet publish -c Release -o /out
 # Use .NET runtime image for final container
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
+RUN apt update && apt install -y sqlite3
+
+
 # Set working directory
 WORKDIR /itu-minitwit/minitwit.Api
 
