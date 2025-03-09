@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using itu_minitwit.Data;
@@ -74,12 +75,14 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     [Fact]
     public async Task Register_UsernameValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", ""),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -94,12 +97,14 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     [Fact]
     public async Task Register_EmailValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test.com",
+            pwd = "test123!"
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -114,12 +119,14 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     [Fact]
     public async Task Register_PasswordValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", ""),
+            username = "test",
+            email = "test@test.com",
+            pwd = ""
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -144,13 +151,15 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
         };
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync();
-
-        var content = new FormUrlEncodedContent(new[]
+        
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -166,12 +175,15 @@ public class API_Tests(InMemoryWebApplicationFactory fixture) : IClassFixture<In
     public async Task Register_RegistersUser_StatusCode200()
     {
         var dbContext = fixture.GetDbContext();
-        var content = new FormUrlEncodedContent(new[]
+        
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 

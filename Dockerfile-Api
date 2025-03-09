@@ -1,0 +1,47 @@
+# Use .NET SDK image to build the project
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+# Set working directory
+WORKDIR /app
+
+# Copy project file(s) and restore dependencies
+COPY ./itu-minitwit/Api/Api.DataAccess/*.csproj ./Api.DataAccess/
+COPY ./itu-minitwit/Api/Api.Services/*.csproj ./Api.Services/
+COPY ./itu-minitwit/Api/Api/*.csproj ./Api/
+
+COPY ./itu-minitwit/Api/Api.DataAccess/ ./Api.DataAccess/
+COPY /itu-minitwit/Api/Api.Services/ ./Api.Services/
+COPY /itu-minitwit/Api/Api/ ./Api/
+
+
+
+
+
+
+# Copy the rest of the application source code
+WORKDIR /app/Api
+RUN dotnet restore --no-cache
+
+# Build and publish the application
+RUN dotnet publish -c Release -o /out
+
+# Use .NET runtime image for final container
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+RUN apt update && apt install -y sqlite3
+
+
+# Set working directory
+WORKDIR /itu-minitwit/minitwit.Api
+
+# Copy published files from build stage
+COPY --from=build /out ./
+
+# Copy the database file and set permissions
+RUN mkdir -p ./data
+
+# Set environment variable to listen on port 8000
+ENV ASPNETCORE_URLS=http://+:8000
+
+# Set entrypoint to run the app
+ENTRYPOINT ["dotnet", "Api.dll"]

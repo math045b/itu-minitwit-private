@@ -1,7 +1,9 @@
 using System.Data.Entity;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using Api.DataAccess.Models;
+using Api.Services.Dto_s.FollowDTO_s;
 using Api.Services.Dto_s.MessageDTO_s;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -62,10 +64,9 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
 
         var response = await client.GetAsync("/msgs");
         var json = await response.Content.ReadAsStringAsync();
-        using var doc = JsonDocument.Parse(json);
-        var messageResponse = JsonConvert.DeserializeObject<MessagesResponse>(json);
+        var messageResponse = JsonConvert.DeserializeObject<List<MessageDto>>(json);
 
-        Assert.Equal(messageResponse!.Messages.First().Text, msg.Text);
+        Assert.Equal(messageResponse!.First().Text, msg.Text);
     }
     
     [Fact]
@@ -124,18 +125,32 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         await context.SaveChangesAsync();
 
         var content = "Hello from Man";
-        
+    
+        var messageDto = new CreateMessageDTO
+        {
+            Content = "Hello from Man"
+        };
+
+        var jsonContent = new StringContent(
+            JsonConvert.SerializeObject(messageDto),
+            Encoding.UTF8,
+            "application/json"
+        );
+    
         // Act
-        var response = await client.PostAsync("/msgs/Man", new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("content", content) }));
+        var response = await client.PostAsync("/msgs/Man", jsonContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent); // Expecting 204 No Content
+
         var savedMessage = await Task.Run(() =>
             context.Messages.AsQueryable().SingleOrDefault(m => m.AuthorId == user.UserId)
         );
-        savedMessage.Should().NotBeNull();
+
+        savedMessage.Should().NotBeNull(); 
         savedMessage.Text.Should().Be(content);
     }
+
     
     public class MessageDto
     {
@@ -157,18 +172,32 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task FollowUser_FollowsItself_BadRequest()
     {
+        // Arrange
         fixture.ResetDB();
         var dbContext = fixture.GetDbContext();
-        var content = new FormUrlEncodedContent(new[]
+
+        // Prepare the DTO with the follow action
+        var followDto = new FollowDTO
         {
-            new KeyValuePair<string, string>("follow", "test"),
-        });
-        
-        var response = await client.PostAsync("/fllws/test", content);
-        
+            Follow = "test",  
+        };
+
+        var jsonContent = new StringContent(
+            JsonConvert.SerializeObject(followDto),
+            Encoding.UTF8,
+            "application/json"
+        );
+
+        // Act
+        var response = await client.PostAsync("/fllws/test", jsonContent);
+
+        // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var user = dbContext.Users.FirstOrDefault(user => user.Username == "test");
-        Assert.Null(user);
+
+        var followRelation = dbContext.Followers
+            .FirstOrDefault(f => f.WhoId == 1 && f.WhomId == 1); 
+
+        Assert.Null(followRelation);
     }
 
     [Fact]
@@ -176,47 +205,85 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     {
         // Arrange
         fixture.ResetDB();
-        
+    
         var dbContext = fixture.GetDbContext();
+    
+        // Create users
         var user1 = new User { Username = "test", Email = "", PwHash = "" };
         var user2 = new User { Username = "test2", Email = "", PwHash = "" };
-        
+    
         dbContext.Users.Add(user1);
         dbContext.Users.Add(user2);
         await dbContext.SaveChangesAsync();
-        
+    
         // Act
-        var content = new FormUrlEncodedContent(new[]
+        // Prepare the FollowDTO to follow "test2"
+        var followDto = new FollowDTO
         {
-            new KeyValuePair<string, string>("follow", "test2"),
-        });
+            Follow = "test2",  // User "test" is trying to follow "test2"
+        };
 
-        var response = await client.PostAsync("/fllws/test", content);
+        // Serialize the FollowDTO into JSON
+        var jsonContent = new StringContent(
+            JsonConvert.SerializeObject(followDto),
+            Encoding.UTF8,
+            "application/json"
+        );
 
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        var user = dbContext.Users.FirstOrDefault(user => user.Username == "test2");
+        var response = await client.PostAsync("/fllws/test", jsonContent);
 
         // Assert
-        Assert.NotNull(user);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        var followRelation = dbContext.Followers
+            .FirstOrDefault(f => f.WhoId == user1.UserId && f.WhomId == user2.UserId); // user1 follows user2
+    
+        Assert.NotNull(followRelation);
     }
+
 
     [Fact]
     public async Task UnfollowUser_UnfollowsItself_BadRequest()
     {
+        // Arrange
         fixture.ResetDB();
-        
         var dbContext = fixture.GetDbContext();
-        var content = new FormUrlEncodedContent(new[]
+
+        // Create user "test"
+        var user1 = new User { Username = "test", Email = "", PwHash = "" };
+    
+        dbContext.Users.Add(user1);
+        await dbContext.SaveChangesAsync();
+    
+        // Act
+        // Prepare the FollowDTO to unfollow "test" (user is trying to unfollow themselves)
+        var followDto = new FollowDTO
         {
-            new KeyValuePair<string, string>("unfollow", "test"),
-        });
-        
-        var response = await client.PostAsync("/fllws/test", content);
-        
+            Unfollow = "test",  // User "test" is trying to unfollow themselves
+        };
+
+        // Serialize the FollowDTO into JSON
+        var jsonContent = new StringContent(
+            JsonConvert.SerializeObject(followDto),
+            Encoding.UTF8,
+            "application/json"
+        );
+
+        var response = await client.PostAsync("/fllws/test", jsonContent);
+
+        // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var user = dbContext.Users.FirstOrDefault(user => user.Username == "test");
-        Assert.Null(user);
+
+        var user = dbContext.Users.FirstOrDefault(u => u.Username == "test");
+        Assert.NotNull(user);  // User should still exist
+
+        var followRelation = dbContext.Followers
+            .FirstOrDefault(f => f.WhoId == user1.UserId && f.WhomId == user1.UserId); // User cannot unfollow themselves
+    
+        // Assert that no follow relation exists
+        Assert.Null(followRelation);
     }
+
     
     [Fact]
     public async Task UnfollowUser_UnfollowsUser_NoContent()
@@ -241,12 +308,18 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         await dbContext.SaveChangesAsync();
         
         // Act
-        var content = new FormUrlEncodedContent(new[]
+        var followDto = new FollowDTO
         {
-            new KeyValuePair<string, string>("unfollow", "test2"),
-        });
+            Unfollow = "test2"  // User1 is unfollowing "test2"
+        };
+        
+        var jsonContent = new StringContent(
+            JsonConvert.SerializeObject(followDto), 
+            Encoding.UTF8, 
+            "application/json"
+        );
 
-        var response = await client.PostAsync("/fllws/test", content);
+        var response = await client.PostAsync("/fllws/test", jsonContent);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         var user = dbContext.Users.FirstOrDefault(user => user.Username == "test2");
@@ -293,12 +366,14 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task Register_UsernameValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", ""),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+        
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -313,12 +388,14 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task Register_EmailValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test.com",
+            pwd = "test123!"
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -333,12 +410,14 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task Register_PasswordValidation_StatusCode400()
     {
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", ""),
+            username = "test",
+            email = "test@test.com",
+            pwd = ""
         });
+
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -363,13 +442,15 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         };
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync();
-
-        var content = new FormUrlEncodedContent(new[]
+        
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+        
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
@@ -385,16 +466,18 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     public async Task Register_RegistersUser_StatusCode200()
     {
         var dbContext = fixture.GetDbContext();
-        var content = new FormUrlEncodedContent(new[]
+        var jsonPayload = System.Text.Json.JsonSerializer.Serialize(new
         {
-            new KeyValuePair<string, string>("username", "test"),
-            new KeyValuePair<string, string>("email", "test@test.com"),
-            new KeyValuePair<string, string>("psw", "test123!"),
+            username = "test",
+            email = "test@test.com",
+            pwd = "test123!"
         });
+        
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/register", content);
 
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         var user = dbContext.Users.FirstOrDefault(user => user.Username == "test");
         Assert.NotNull(user);
     }
