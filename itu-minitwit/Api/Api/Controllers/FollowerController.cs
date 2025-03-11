@@ -18,8 +18,8 @@ public class FollowerController(IFollowService followService, ILatestService lat
     {
         try
         {
-            logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
             await latestService.UpdateLatest(latest);
+            logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
         
             if (followDto.Follow != null)
             {
@@ -35,8 +35,8 @@ public class FollowerController(IFollowService followService, ILatestService lat
             {
                 if (username == followDto.Unfollow)
                 {
-                    logger.LogError("You cannot follow yourself");
-                    return BadRequest("You cannot follow yourself");
+                    logger.LogError("You cannot unfollow yourself");
+                    return BadRequest("You cannot unfollow yourself");
                 }
                 
                 return await Unfollow(username, followDto.Unfollow);
@@ -62,7 +62,7 @@ public class FollowerController(IFollowService followService, ILatestService lat
         }
         catch (UserDoesntExistException e)
         {
-            logger.LogError(e, "User doesn't exists");
+            logger.LogError(e, "User does not exists");
             return NotFound(e.Message);
         }
         catch (AlreadyFollowsUserException e)
@@ -84,12 +84,12 @@ public class FollowerController(IFollowService followService, ILatestService lat
         }
         catch (UserDoesntExistException e)
         {
-            logger.LogError(e, "User doesn't exists");
+            logger.LogError(e, "User does not exists");
             return NotFound(e.Message);
         }
         catch (DontFollowUserException e)
         {
-            logger.LogError(e, $"\"{username}\" already follows \"{unfollow}\"");
+            logger.LogError(e, $"\"{username}\" does not follow \"{unfollow}\"");
             return BadRequest(e.Message);
         }
 
@@ -103,14 +103,15 @@ public class FollowerController(IFollowService followService, ILatestService lat
     {
         try
         {
-            logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
             await latestService.UpdateLatest(latest);
+            logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
 
             var follows = followService.GetFollows(username, no);
             return Ok(new { follows });
         }
         catch (UserDoesntExistException e)
         {
+            logger.LogError(e, "\"{username}\" does not exists");
             return NotFound(new { message = e.Message });
         }
         catch (Exception e)
