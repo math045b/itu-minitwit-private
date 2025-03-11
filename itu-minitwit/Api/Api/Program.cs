@@ -5,6 +5,9 @@ using Api.Services.RepositoryInterfaces;
 using Api.Services.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Filters;
+using Serilog.Templates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +36,55 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MinitwitDbContext>(options =>
     options.UseSqlite(connection));
 
+// Configure Serilog
+var logFolder = builder.Configuration["LogLocation:LogFolder"];
+var  outputTemplate = new ExpressionTemplate("[{@t:HH:mm:ss} {@l:u3} {Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1)}] {@m}\n{@x}");
+var logger = new LoggerConfiguration()
+    // Log to console
+    .WriteTo.Console(outputTemplate)
+    .Enrich.FromLogContext()
+    //log everything to a file
+    .WriteTo.File(outputTemplate,$"{logFolder}/all/all/api_log-.txt", rollingInterval: RollingInterval.Day)
+    //log errors to a separate file as well
+    .WriteTo.File(outputTemplate, $"{logFolder}/all/errors/api_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)  
+    //filter to log things from the follow related code
+    .WriteTo.Logger(lc => lc
+        .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") &&
+                                     (e.Properties["SourceContext"].ToString().Contains("FollowerController") ||
+                                      e.Properties["SourceContext"].ToString().Contains("FollowService") ||
+                                      e.Properties["SourceContext"].ToString().Contains("FollowRepository")))
+        .WriteTo.File(outputTemplate, $"{logFolder}/follow/all/follow_log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File(outputTemplate, $"{logFolder}/follow/errors/follow_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
+    //filter to log things from the message related code
+    .WriteTo.Logger(lc => lc
+        .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") &&
+                                     (e.Properties["SourceContext"].ToString().Contains("MessageController") ||
+                                      e.Properties["SourceContext"].ToString().Contains("MessageService") ||
+                                      e.Properties["SourceContext"].ToString().Contains("MessageRepository")))
+        .WriteTo.File(outputTemplate, $"{logFolder}/message/all/message_log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File(outputTemplate, $"{logFolder}/message/errors/message_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
+    //filter to log things from the user related code
+    .WriteTo.Logger(lc => lc
+        .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") &&
+                                     (e.Properties["SourceContext"].ToString().Contains("RegisterController") ||
+                                      e.Properties["SourceContext"].ToString().Contains("UserService") ||
+                                      e.Properties["SourceContext"].ToString().Contains("UserRepository")))
+        .WriteTo.File(outputTemplate, $"{logFolder}/user/all/user_log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File(outputTemplate, $"{logFolder}/user/errors/user_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
+    //filter to log latest from the user related code
+    .WriteTo.Logger(lc => lc
+        .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") &&
+                                     (e.Properties["SourceContext"].ToString().Contains("LatestRepository")))
+        .WriteTo.File(outputTemplate, $"{logFolder}/latest/all/user_log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File(outputTemplate, $"{logFolder}/latest/errors/user_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
+    .CreateLogger();
+
+// Add Serilog to .NET logging system
+Log.Logger = logger;
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -41,6 +93,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 

@@ -1,4 +1,4 @@
-namespace Api.Services.Exceptions;
+namespace Api.Services.CustomExceptions;
 
 public class AlreadyFollowsUserException : Exception
 {

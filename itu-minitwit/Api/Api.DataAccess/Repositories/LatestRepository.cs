@@ -1,4 +1,5 @@
 ﻿using Api.DataAccess.Models;
+using Api.Services;
 using Api.Services.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace Api.DataAccess.Repositories;
 
 public class LatestRepository(MinitwitDbContext dbContext) : ILatestRepository
 {
+    [LogReturnValue]
     public async Task<int> GetLatest()
     {
         var latestProcessedCommandId = await dbContext.LatestProcessedSimActions.FirstOrDefaultAsync();
@@ -13,6 +15,7 @@ public class LatestRepository(MinitwitDbContext dbContext) : ILatestRepository
         return latestProcessedCommandId.Id;
     }
 
+    [LogMethodParameters]
     public async Task UpdateLatest(int latest)
     {
         await dbContext.LatestProcessedSimActions.ExecuteDeleteAsync();
