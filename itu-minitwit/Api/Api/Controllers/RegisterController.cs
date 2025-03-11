@@ -53,7 +53,7 @@ public class RegisterController(
 
             try
             {
-                userService.Register(new CreateUserDTO()
+                await userService.Register(new CreateUserDTO()
                     { Username = request.Username, Email = request.Email, Pwd = request.Pwd });
             }
             catch (UserAlreadyExists e)
