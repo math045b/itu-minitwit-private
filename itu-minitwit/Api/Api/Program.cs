@@ -71,6 +71,12 @@ var logger = new LoggerConfiguration()
                                       e.Properties["SourceContext"].ToString().Contains("UserRepository")))
         .WriteTo.File(outputTemplate, $"{logFolder}/user/all/user_log-.txt", rollingInterval: RollingInterval.Day)
         .WriteTo.File(outputTemplate, $"{logFolder}/user/errors/user_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
+    //filter to log latest from the user related code
+    .WriteTo.Logger(lc => lc
+        .Filter.ByIncludingOnly(e => e.Properties.ContainsKey("SourceContext") &&
+                                     (e.Properties["SourceContext"].ToString().Contains("LatestRepository")))
+        .WriteTo.File(outputTemplate, $"{logFolder}/latest/all/user_log-.txt", rollingInterval: RollingInterval.Day)
+        .WriteTo.File(outputTemplate, $"{logFolder}/latest/errors/user_log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error))
     .CreateLogger();
 
 // Add Serilog to .NET logging system
