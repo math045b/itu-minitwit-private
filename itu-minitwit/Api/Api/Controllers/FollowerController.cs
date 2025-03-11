@@ -1,11 +1,9 @@
-using System.Runtime.InteropServices.JavaScript;
-using Api.DataAccess.Models;
 using Api.Services;
 using Api.Services.CustomExceptions;
+using Api.Services.Dto_s.FollowDTO_s;
 using Api.Services.Exceptions;
 using Api.Services.Services;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace Api.Controllers;
 
@@ -16,36 +14,34 @@ public class FollowerController(IFollowService followService, ILatestService lat
     [LogMethodParameters]
     [LogReturnValueAsync]
     [HttpPost("/fllws/{username}")]
-    public async Task<ActionResult> FollowOrUnfollow(string username, [FromForm] string? follow,
-        [FromForm] string? unfollow, [FromQuery] int? latest)
+    public async Task<ActionResult> FollowOrUnfollow(string username, [FromBody] FollowDTO followDto, [FromQuery] int? latest)
     {
         try
         {
             logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
             await latestService.UpdateLatest(latest);
-
-            if (follow != null)
+        
+            if (followDto.Follow != null)
             {
-                if (username == follow)
+                if (username == followDto.Follow)
                 {
                     logger.LogError("You cannot follow yourself");
                     return BadRequest("You cannot follow yourself");
                 }
-
-                return await Follow(username, follow);
+                
+                return await Follow(username, followDto.Follow);
             }
-
-            if (unfollow != null)
+            if (followDto.Unfollow != null)
             {
-                if (username == unfollow)
+                if (username == followDto.Unfollow)
                 {
                     logger.LogError("You cannot follow yourself");
                     return BadRequest("You cannot follow yourself");
                 }
-
-                return await Unfollow(username, unfollow);
+                
+                return await Unfollow(username, followDto.Unfollow);
             }
-
+            
             logger.LogError("You must provide a user to follow or unfollow");
             return BadRequest("You must provide a user to follow or unfollow");
         } 

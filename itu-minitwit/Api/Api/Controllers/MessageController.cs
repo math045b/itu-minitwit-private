@@ -1,3 +1,5 @@
+using Api.Services.Dto_s.MessageDTO_s;
+using Microsoft.AspNetCore.Mvc;
 using Api.Services;
 using Api.Services.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -65,11 +67,11 @@ public class MessageController(IMessageService db, ILatestService latestService,
     [LogReturnValueAsync]
     [IgnoreAntiforgeryToken]
     [HttpPost("msgs/{username}")]
-    public async Task<IActionResult> PostMessage(string username, [FromForm] string content)
+    public async Task<IActionResult> PostMessage(string username, [FromBody] CreateMessageDTO messageDto)
     {
         try
         {
-            await db.PostMessage(username, content);
+            await db.PostMessage(username, messageDto.Content);
             return NoContent();
         }
         catch (KeyNotFoundException e)
