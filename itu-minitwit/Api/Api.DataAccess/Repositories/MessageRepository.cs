@@ -10,9 +10,9 @@ namespace Api.DataAccess.Repositories;
 public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepository> logger) : IMessageRepository
 {
     [LogMethodParameters]
-    public Task<List<DisplayMessageDTO>> ReadMessages()
+    public async Task<List<DisplayMessageDTO>> ReadMessages()
     {
-        return dbContext.Messages 
+        return await dbContext.Messages 
             .Join(dbContext.Users,
                 m => m.AuthorId,
                 a => a.UserId,
@@ -24,9 +24,9 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
     }
 
     [LogMethodParameters]
-    public Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize = 100)
+    public async Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize = 100)
     {
-        var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null)
         {
             var e = new KeyNotFoundException($"User \"{username}\" found");
@@ -34,7 +34,7 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
             throw e;
         }
         
-        return dbContext.Messages
+        return await dbContext.Messages
             .Where(m => m.AuthorId == user.UserId && m.Flagged == 0)
             .OrderByDescending(m => m.PubDate)
             .Take(pagesize)
@@ -50,9 +50,9 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
     
     [LogMethodParameters]
     [LogReturnValue]
-    public Task<bool> PostMessage(string username, string content)
+    public async Task<bool> PostMessage(string username, string content)
     {
-        var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         
         if (user == null)
         {
@@ -69,8 +69,8 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
             PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds(),
         };
         
-        dbContext.Messages.Add(message);
-        dbContext.SaveChangesAsync();
-        return Task.FromResult(true);
+        await dbContext.Messages.AddAsync(message);
+        await dbContext.SaveChangesAsync();
+        return true;
     }
 }

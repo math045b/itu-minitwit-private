@@ -15,8 +15,8 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
     [LogReturnValueAsync]
     public async Task Follow(string username, string follow)
     {
-        var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
-        var userToFollow = dbContext.Users.FirstOrDefault(u => u.Username == follow);
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var userToFollow = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == follow);
 
         if (user == null || userToFollow == null)
         {
@@ -25,7 +25,7 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
             throw e;
         }
     
-        var followRelation = dbContext.Followers.FirstOrDefault(f => f.WhoId == user!.UserId
+        var followRelation = await dbContext.Followers.FirstOrDefaultAsync(f => f.WhoId == user!.UserId
                                                                      && f.WhomId == userToFollow!.UserId);
 
         if (followRelation != null)
@@ -41,7 +41,7 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
             WhomId = userToFollow.UserId
         };
     
-        dbContext.Followers.Add(followRelation);
+        await dbContext.Followers.AddAsync(followRelation);
         await dbContext.SaveChangesAsync();
     }
 
@@ -49,8 +49,8 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
     [LogReturnValueAsync]
     public async Task Unfollow(string username, string unfollow)
     {
-        var user = dbContext.Users.FirstOrDefault(u => u.Username == username);
-        var userToUnfollow = dbContext.Users.FirstOrDefault(u => u.Username == unfollow);
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var userToUnfollow = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == unfollow);
 
         if (user == null || userToUnfollow == null)
         {
@@ -60,7 +60,7 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
         }
     
         var followRelation =
-            dbContext.Followers.FirstOrDefault(f => f.WhoId == user!.UserId
+            await dbContext.Followers.FirstOrDefaultAsync(f => f.WhoId == user!.UserId
                                                     && f.WhomId == userToUnfollow!.UserId);
 
         if (followRelation == null)

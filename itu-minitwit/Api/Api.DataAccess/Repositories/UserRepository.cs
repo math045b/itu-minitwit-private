@@ -21,7 +21,7 @@ public class UserRepository(MinitwitDbContext db, IPasswordHasher<User> password
         if (await db.Users.AnyAsync(u => u.Username == user.Username))
             throw new UserAlreadyExists($"User \"{user.Username}\" already exists");
         
-        var createdUser = db.Users.Add(user);
+        var createdUser = await db.Users.AddAsync(user);
         await db.SaveChangesAsync();
         return new ReadUserDTO()
             { UserId = createdUser.Entity.UserId, Username = user.Username, Email = user.Email };
