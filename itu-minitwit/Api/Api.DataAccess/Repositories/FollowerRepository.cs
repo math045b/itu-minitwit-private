@@ -24,25 +24,19 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
             logger.LogError($"{e.Message} - throw: {e.GetType()}");
             throw e;
         }
-    
-        var followRelation = await dbContext.Followers.FirstOrDefaultAsync(f => f.WhoId == user!.UserId
-                                                                     && f.WhomId == userToFollow!.UserId);
+        
+        if (!await dbContext.Followers.AnyAsync(f => f.WhoId == user.UserId
+                                             && f.WhomId == userToFollow.UserId))
+        {
+            var followRelation = new Follower
+            {
+                WhoId = user.UserId,
+                WhomId = userToFollow.UserId
+            };
 
-        if (followRelation != null)
-        {
-            var e = new AlreadyFollowsUserException($"\"{username}\" already follows \"{follow}\"");
-            logger.LogError($"{e.Message} - throw: {e.GetType()}");
-            throw e;
+            await dbContext.Followers.AddAsync(followRelation);
+            await dbContext.SaveChangesAsync();
         }
-    
-        followRelation = new Follower
-        {
-            WhoId = user.UserId,
-            WhomId = userToFollow.UserId
-        };
-    
-        await dbContext.Followers.AddAsync(followRelation);
-        await dbContext.SaveChangesAsync();
     }
 
     [LogMethodParameters]
@@ -51,27 +45,23 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         var userToUnfollow = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == unfollow);
-
+        
         if (user == null || userToUnfollow == null)
         {
             var e = new UserDoesntExistException($"\"{username}\" not found");
             logger.LogError($"{e.Message} - throw: {e.GetType()}");
             throw e;
         }
-    
+        
         var followRelation =
             await dbContext.Followers.FirstOrDefaultAsync(f => f.WhoId == user!.UserId
                                                     && f.WhomId == userToUnfollow!.UserId);
-
-        if (followRelation == null)
+        
+        if (followRelation != null)
         {
-            var e = new DontFollowUserException($"\"{username}\" doesn't follow \"{unfollow}\"");
-            logger.LogError($"{e.Message} - throw: {e.GetType()}");
-            throw e;
+            dbContext.Followers.Remove(followRelation);
+            await dbContext.SaveChangesAsync();
         }
-    
-        dbContext.Followers.Remove(followRelation);
-        await dbContext.SaveChangesAsync();
     }
 
     [LogMethodParameters]
