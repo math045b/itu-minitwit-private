@@ -18,11 +18,18 @@ public class LatestRepository(MinitwitDbContext dbContext) : ILatestRepository
     [LogMethodParameters]
     public async Task UpdateLatest(int latest)
     {
-        await dbContext.LatestProcessedSimActions.ExecuteDeleteAsync();
+        var latestObj = await dbContext.LatestProcessedSimActions.FirstOrDefaultAsync();
+        if (latestObj != null)
+        {
+            latestObj.Latest = latest; 
+            dbContext.LatestProcessedSimActions.Update(latestObj);
+        }
+        else
+        {
+            latestObj = new LatestProcessedSimAction { Latest = latest };
+            await dbContext.LatestProcessedSimActions.AddAsync(latestObj);
+        }
 
-        var latestObj = new LatestProcessedSimAction { Id = latest };
-
-        await dbContext.LatestProcessedSimActions.AddAsync(latestObj);
         await dbContext.SaveChangesAsync();
     }
 }
