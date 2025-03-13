@@ -31,11 +31,11 @@ WORKDIR /itu-minitwit/minitwit.Api
 # Copy published files from build stage
 COPY --from=build /out ./
 
-# Copy the database file and set permissions
+# Make a data folder for the database
 RUN mkdir -p ./data
 
 # Set environment variable to listen on port 8000
-ENV ASPNETCORE_URLS=http://+:8000
+#ENV ASPNETCORE_URLS=http://+:8000
 
 # Set entrypoint to run the app
 ENTRYPOINT ["dotnet", "Api.dll"]

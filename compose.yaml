@@ -5,7 +5,7 @@ networks:
     driver: bridge
     
 services:
-  itu-minitwit:
+  minitwitapi:
     build:
       context: .
       dockerfile: Dockerfile-Api
@@ -16,8 +16,8 @@ services:
     networks:
       - monitoring
     volumes:
-      - db-data:/itu-minitwit/minitwit.web/data
-      - logs:/itu-minitwit/minitwit.web/logs
+      - db-data:/itu-minitwit/minitwit.Api/data
+      - logs:/itu-minitwit/minitwit.Api/logs
     depends_on:
       - grafana
       - prometheus
@@ -30,7 +30,7 @@ services:
     networks:
       - monitoring
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml':ro
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
       
   grafana:
