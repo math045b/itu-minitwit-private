@@ -65,11 +65,6 @@ public class FollowerController(IFollowService followService, ILatestService lat
             logger.LogError(e, "User does not exists");
             return NotFound(e.Message);
         }
-        catch (AlreadyFollowsUserException e)
-        {
-            logger.LogError(e, $"\"{username}\" already follows \"{follow}\"");
-            return BadRequest(e.Message);
-        }
 
         return NoContent();
     }
@@ -86,11 +81,6 @@ public class FollowerController(IFollowService followService, ILatestService lat
         {
             logger.LogError(e, "User does not exists");
             return NotFound(e.Message);
-        }
-        catch (DontFollowUserException e)
-        {
-            logger.LogError(e, $"\"{username}\" does not follow \"{unfollow}\"");
-            return BadRequest(e.Message);
         }
 
         return NoContent();
