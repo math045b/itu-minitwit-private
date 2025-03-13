@@ -111,7 +111,7 @@ public class FollowerController(IFollowService followService, ILatestService lat
         }
         catch (UserDoesntExistException e)
         {
-            logger.LogError(e, "\"{username}\" does not exists");
+            logger.LogError(e, $"\"{username}\" does not exists");
             return NotFound(new { message = e.Message });
         }
         catch (Exception e)
