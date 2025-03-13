@@ -56,7 +56,7 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
         
         if (user == null)
         {
-            var e = new KeyNotFoundException($"User \"{username}\" found");
+            var e = new KeyNotFoundException($"User \"{username}\" not found");
             logger.LogError($"{e.Message} - throw: {e.GetType()}");
             throw e;
         }
