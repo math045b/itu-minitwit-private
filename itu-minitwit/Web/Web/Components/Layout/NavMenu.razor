@@ -1,0 +1,36 @@
+﻿@using Web.Services
+@inject UserState Userstate
+
+<nav class="navbar navbar-expand-md navbar-light custom-nav-bg mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand custom-navbar-brand" href="">MiniTwit</a>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarCollapse">
+            <ul class="navbar-nav mb-2 mb-md-0">
+                @if (Userstate.IsLoggedIn)
+                {
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="PrivateTimeline">Your Timeline</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Public Timeline</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="Logout">Log out</NavLink>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Public Timeline</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="Register">Register</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="Login">Login</NavLink>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
