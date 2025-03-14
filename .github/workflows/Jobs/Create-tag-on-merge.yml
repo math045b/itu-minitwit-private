@@ -2,10 +2,7 @@ name: Create tag on PR Merge
 permissions: write-all
 
 on:
-  pull_request:
-    types: [closed]
-    branches:
-      - main
+  workflow_call:
 
 jobs:
   fetch-labels-and-create-tag:
