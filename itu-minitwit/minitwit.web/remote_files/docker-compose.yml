@@ -11,4 +11,22 @@ services:
     networks:
       - main
     ports:
+      - "5001:5000"
+    volumes:
+      - db-data:/itu-minitwit/minitwit.web/data
+      - logs:/itu-minitwit/minitwit.web/logs
+
+  minitwitapiimage:
+    image: jacquespuvis/minitwitapi
+    container_name: minitwitapi
+    networks:
+      - main
+    ports:
       - "5000:5000"
+    volumes:
+      - db-data:/itu-minitwit/minitwit.Api/data
+      - logs:/itu-minitwit/minitwit.Api/logs
+
+volumes:
+  db-data:
+  logs:
