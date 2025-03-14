@@ -24,6 +24,11 @@ public partial class MinitwitDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<LatestProcessedSimAction>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
+        
         modelBuilder.Entity<Follower>(entity =>
         {
             entity.HasKey(e => new { e.WhoId, e.WhomId });

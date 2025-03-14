@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Route("[Controller]")]
+[Route("api/[Controller]")]
 [ApiController]
 public class RegisterController(
     IUserService userService,

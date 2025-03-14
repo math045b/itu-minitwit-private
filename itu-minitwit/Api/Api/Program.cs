@@ -108,6 +108,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//apply pending migration
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<MinitwitDbContext>();
+    context.Database.Migrate();
+    if (!context.LatestProcessedSimActions.Any())
+    {
+        context.LatestProcessedSimActions.Add(new LatestProcessedSimAction { Latest = -1 });
+        context.SaveChanges();
+    }
+}
+
 app.MapPrometheusScrapingEndpoint();
 
 app.UseSerilogRequestLogging();
