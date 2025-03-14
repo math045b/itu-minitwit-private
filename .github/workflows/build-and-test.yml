@@ -16,14 +16,19 @@ jobs:
           - Api
           - Api.DataAccess
           - Api.Services
-          - Api.UnitTest
-        
+          - Api.UnitTest 
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.x
+        
+    - name: Restore dependencies
+      run: dotnet restore ${{ matrix.project }}
+      
+    - name: Build
+      run: dotnet build --no-restore ${{ matrix.project }}
 
 
   Test-API:
