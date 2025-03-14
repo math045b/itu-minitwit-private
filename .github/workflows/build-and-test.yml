@@ -7,6 +7,17 @@ on:
 jobs:
   Build-API:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: itu-minitwit/
+    strategy:
+      matrix:
+        project:
+          - Api
+          - Api.DataAccess
+          - Api.Services
+          - Api.UnitTest
+        
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -14,8 +25,17 @@ jobs:
       with:
         dotnet-version: 8.x
 
+
   Test-API:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: itu-minitwit/
+    strategy:
+      matrix:
+        project:
+          - Api.UnitTest
+          
     needs: Build-API
     steps:
     - uses: actions/checkout@v4
