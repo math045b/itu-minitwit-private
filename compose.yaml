@@ -9,7 +9,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-Api
-    image: jacquespuvis/minitwitimageapi
+    image: jacquespuvis/minitwitapi
     container_name: minitwitapi
     ports:
       - '5000:5000'
@@ -21,6 +21,16 @@ services:
     depends_on:
       - grafana
       - prometheus
+  minitwtitweb:
+    build:
+      context: .
+      dockerfile: Dockerfile-minitwit
+    image: jacquespuvis/minitwitweb
+    container_name: minitwitweb
+    ports:
+      - '5000:5206'
+    depends_on:
+      - minitwitapi
       
   prometheus:
     image: prom/prometheus
