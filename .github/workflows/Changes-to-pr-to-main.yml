@@ -1,0 +1,10 @@
+name: Changes to pr to main
+permissions: write-all
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - labeled
+      - unlabeled
+      - synchronize
