@@ -8,3 +8,7 @@ on:
       - labeled
       - unlabeled
       - synchronize
+
+jobs:
+  check-labels:
+    uses: ./.github/workflows/jobs/check-for-lable.yml
