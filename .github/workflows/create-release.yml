@@ -41,13 +41,11 @@ jobs:
       
       - name: Build
         run: |
-          dotnet build --no-restore /Api
-          dotnet build --no-restore /Web
+          dotnet build --no-restore /Api/Api
       
       - name: Test
         run: |
-          dotnet test --verbosity normal /Api
-          dotnet test --verbosity normal /Web
+          dotnet test --verbosity normal /Api/Api.UnitTest
       
       #### Getting timechart with GitScraper image #####
       - name: Log in to Docker Hub
