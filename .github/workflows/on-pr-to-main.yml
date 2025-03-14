@@ -1,0 +1,7 @@
+name: On pr to main
+permissions: write-all
+
+on:
+  pull_request:
+    branches:
+      - main
