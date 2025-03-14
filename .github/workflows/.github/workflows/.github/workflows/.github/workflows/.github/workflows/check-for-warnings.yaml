@@ -1,0 +1,26 @@
+name: Check for warnings
+
+on: [pull_request]
+
+jobs:
+  check_for_warnings:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: itu-minitwit/
+    strategy:
+      matrix:
+        project:
+          - Api/Api
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x
+  
+    - name: Restore dependencies
+      run: dotnet restore ${{ matrix.project }}
+  
+    - name: Build solution and check for warnings
+      run: dotnet build --no-incremental /WarnAsError ${{ matrix.project }}
