@@ -1,4 +1,4 @@
-name: On pr to main
+name: Commit to pr to main
 permissions: write-all
 
 on:
