@@ -5,7 +5,7 @@
 <div class="card mb-3" style="max-width: 1000px;">
     <div class="card-header d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center">
-            <img src="@MessageDto.GravatarUrl" class="rounded-circle me-3" alt="User Image" style="width: 40px; height: 40px;">
+            @* <img src="@MessageDto.GravatarUrl" class="rounded-circle me-3" alt="User Image" style="width: 40px; height: 40px;"> *@
             <h5 class="card-title mb-0">
                 <a href="/PrivateTimeline/@MessageDto.Username" class="card-link">@MessageDto.Username</a>
             </h5>
@@ -23,7 +23,7 @@
         }
     </div>
     <div class="card-body">
-        <p class="card-text">@MessageDto.Message</p>
+        <p class="card-text">@MessageDto.Text</p>
         <p class="card-text">
             <small class="text-body-secondary">@MessageDto.PubDate</small>
         </p>

@@ -7,9 +7,9 @@ namespace Web.Components;
 public class MessageBase : ComponentBase
 {
     [Parameter]
-    public DisplayMessageDto MessageDto { get; set; } = new DisplayMessageDto(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras cursus justo ante, et sollicitudin arcu mollis sit amet. Sed luctus tempor nisi et dignissim. Etia",
-        "Mr. Test", "test@test.com", DateTime.Now);
+    public DisplayMessageDto MessageDto { get; set; } = new DisplayMessageDto();
+    // "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras cursus justo ante, et sollicitudin arcu mollis sit amet. Sed luctus tempor nisi et dignissim. Etia",
+    // "Mr. Test", DateTime.Now.Minute
 
     [Inject] protected UserState userstate { get; set; }
     
