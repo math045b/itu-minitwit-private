@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: itu-minitwit/
+        working-directory: itu-minitwit/Api/
     strategy:
       matrix:
         project:
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: itu-minitwit/
+        working-directory: itu-minitwit/Api/
     strategy:
       matrix:
         project:
