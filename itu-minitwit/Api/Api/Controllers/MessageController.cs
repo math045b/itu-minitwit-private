@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Route("/")]
+[Route("api/")]
 public class MessageController(IMessageService db, ILatestService latestService, ILogger<MessageController> logger) : Controller
 {
 

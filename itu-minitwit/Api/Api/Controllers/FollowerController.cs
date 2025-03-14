@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Route("[Controller]")]
+[Route("api/")]
 [ApiController]
 public class FollowerController(IFollowService followService, ILatestService latestService, ILogger<FollowerController> logger) : ControllerBase
 {
     [LogMethodParameters]
     [LogReturnValueAsync]
-    [HttpPost("/fllws/{username}")]
+    [HttpPost("fllws/{username}")]
     public async Task<ActionResult> FollowOrUnfollow(string username, [FromBody] FollowDTO followDto, [FromQuery] int? latest)
     {
         try
@@ -88,7 +88,7 @@ public class FollowerController(IFollowService followService, ILatestService lat
 
     [LogMethodParameters]
     [LogReturnValueAsync]
-    [HttpGet("/fllws/{username}")]
+    [HttpGet("fllws/{username}")]
     public async Task<IActionResult> GetFollows(string username, [FromQuery] int? latest, [FromQuery] int no = 100)
     {
         try
