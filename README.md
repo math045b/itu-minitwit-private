@@ -22,3 +22,14 @@ As a \<who>, I want to \<What>, in order to \<Why>
 
 ## Branch named
 All lowercap with - fx update-readme
+
+## Useful commands
+### Docker
+Get container names \
+`docker ps --format "{{.Names}}"`
+
+Build then run in the background \
+`docker compose up --build --detach`
+
+Open a shell in a container \
+`docker exec -it <container-name> sh`
