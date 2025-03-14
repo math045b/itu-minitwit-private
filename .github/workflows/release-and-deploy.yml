@@ -1,0 +1,8 @@
+name: Release and deploy
+permissions: write-all
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
