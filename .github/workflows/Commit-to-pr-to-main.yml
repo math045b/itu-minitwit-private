@@ -5,3 +5,10 @@ on:
   pull_request:
     branches:
       - main
+
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/jobs/build-and-test.yml
+
+  check-for-warnings:
+    uses: ./.github/workflows/jobs/check-for-warnings.yml
