@@ -1,4 +1,5 @@
 using Web.Components;
+using Web.DataAccess;
 using Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,9 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+
+
 builder.Services.AddSingleton<UserState>();
 builder.Services.AddScoped<IFollowService, FollowService>();
 
+//repository's
+builder.Services.AddHttpClient<IMessageRepository, MessageRepository>();
+
+//services
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 var app = builder.Build();
 
