@@ -1,0 +1,8 @@
+nav.navbar.custom-nav-bg {
+    background-color: rgba(42, 121, 225, 0.38);
+    font-size: 20px;
+}
+
+a.custom-navbar-brand {
+    font-size: 25px;
+}
