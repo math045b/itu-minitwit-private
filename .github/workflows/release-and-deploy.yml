@@ -6,3 +6,22 @@ on:
     types: [closed]
     branches:
       - main
+
+jobs:
+  check-for-warnings:
+    uses: ./.github/workflows/jobs/check-for-warnings.yml
+
+  build-and-test:
+    uses: ./.github/workflows/jobs/build-and-test.yml
+
+  create-tag:
+    needs: [check-for-warnings, build-and-test]
+    uses: ./.github/workflows/jobs/Create-tag-on-merge.yml
+
+  create-release:
+    needs: create-tag
+    uses: ./.github/workflows/jobs/create-release.yml
+
+  deploy:
+    needs: [check-for-warnings, build-and-test]
+    uses: ./.github/workflows/jobs/continuous-deployment.yml
