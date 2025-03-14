@@ -25,7 +25,6 @@
     <div class="card-body">
         <p class="card-text">@MessageDto.Text</p>
         <p class="card-text">
-            <small class="text-body-secondary">@MessageDto.PubDate</small>
-        </p>
+            @(DateTimeOffset.FromUnixTimeSeconds(MessageDto.PubDate).DateTime.ToString("yyyy-MM-dd HH:mm:ss"))        </p>
     </div>
 </div>
