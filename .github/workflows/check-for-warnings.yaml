@@ -1,6 +1,8 @@
 name: Check for warnings
 
-on: [pull_request]
+on:
+  pull_request:
+    branches: [ main ]
 
 jobs:
   check_for_warnings:
