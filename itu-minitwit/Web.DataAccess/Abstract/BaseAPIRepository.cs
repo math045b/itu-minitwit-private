@@ -5,7 +5,7 @@ namespace Web.DataAccess.Abstract;
 public abstract class BaseAPIRepository(HttpClient httpClient)
 {
     protected HttpClient HttpClient { get; } = httpClient;
-    protected string ApiBaseUrl = "http://localhost:5000";
+    protected string ApiBaseUrl = "http://localhost:5000"; //TODO: change url to remote url
     
     public async Task<IEnumerable<T>> GetAllAsync<T>(string endpoint)
     {
