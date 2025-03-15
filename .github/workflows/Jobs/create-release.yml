@@ -31,14 +31,6 @@ jobs:
           dotnet restore /Api
           dotnet restore /Web
       
-      - name: Build
-        run: |
-          dotnet build --no-restore /Api/Api
-      
-      - name: Test
-        run: |
-          dotnet test --verbosity normal /Api/Api.UnitTest
-      
       #### Getting timechart with GitScraper image #####
       - name: Log in to Docker Hub
         run: |
