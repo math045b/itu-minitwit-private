@@ -34,3 +34,14 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwitapi:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitapi:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitapi:webbuildcache,mode=max
+
+      - name: Build and push minitwitweb
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile-minitwit
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/minitwitweb:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitweb:webbuildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitweb:webbuildcache,mode=max
+
