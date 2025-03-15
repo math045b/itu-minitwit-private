@@ -11,4 +11,4 @@ on:
 
 jobs:
   check-labels:
-    uses: ./.github/workflows/jobs/check-for-lable.yml
+    uses: ./.github/workflows/check-for-lable.yml

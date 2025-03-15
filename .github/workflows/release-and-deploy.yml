@@ -9,27 +9,34 @@ on:
 
 jobs:
   check-for-warnings:
-    uses: ./.github/workflows/jobs/check-for-warnings.yml
+    if: github.event.pull_request.merged == true
+    uses: ./.github/workflows/check-for-warnings.yml
 
   build:
-    uses: ./.github/workflows/jobs/build.yml
+    if: github.event.pull_request.merged == true
+    uses: ./.github/workflows/build.yml
 
   test:
+    if: github.event.pull_request.merged == true
     needs: build
-    uses: ./.github/workflows/jobs/test.yml
+    uses: ./.github/workflows/test.yml
 
   create-tag:
+    if: github.event.pull_request.merged == true
     needs: [check-for-warnings, test]
-    uses: ./.github/workflows/jobs/Create-tag-on-merge.yml
+    uses: ./.github/workflows/Create-tag-on-merge.yml
 
   create-release:
+    if: github.event.pull_request.merged == true
     needs: create-tag
-    uses: ./.github/workflows/jobs/create-release.yml
+    uses: ./.github/workflows/create-release.yml
 
   create-docker-image:
+    if: github.event.pull_request.merged == true
     needs: [check-for-warnings, test]
-    uses: ./.github/workflows/jobs/create-docker-image.yml
+    uses: ./.github/workflows/create-docker-image.yml
 
   deploy-to-digitalocean:
+    if: github.event.pull_request.merged == true
     needs: create-docker-image
-    uses: ./.github/workflows/jobs/deploy-to-digitalocean.yml
+    uses: ./.github/workflows/deploy-to-digitalocean.yml
