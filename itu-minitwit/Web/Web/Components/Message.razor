@@ -10,7 +10,7 @@
                 <a href="/PrivateTimeline/@MessageDto.Username" class="card-link">@MessageDto.Username</a>
             </h5>
         </div>
-        @if (userstate.IsLoggedIn && userstate.Username != MessageDto.Username)
+        @if (Userstate.IsLoggedIn && Userstate.Username != MessageDto.Username)
         {
             if (DoseLoggedInUserFollowUser())
             {

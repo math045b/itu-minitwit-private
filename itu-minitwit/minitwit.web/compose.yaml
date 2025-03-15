@@ -1,6 +1,0 @@
-﻿services:
-  itu-minitwit:
-    image: itu-minitwit
-    build:
-      context: .
-      dockerfile: Dockerfile

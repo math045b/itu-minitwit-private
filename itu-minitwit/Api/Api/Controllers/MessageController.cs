@@ -2,7 +2,6 @@ using Api.Services.Dto_s.MessageDTO_s;
 using Microsoft.AspNetCore.Mvc;
 using Api.Services;
 using Api.Services.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 

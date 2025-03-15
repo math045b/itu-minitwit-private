@@ -7,30 +7,34 @@ namespace Web.Components;
 public class MessageBase : ComponentBase
 {
     [Parameter]
-    public DisplayMessageDto MessageDto { get; set; } = new DisplayMessageDto();
-    // "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras cursus justo ante, et sollicitudin arcu mollis sit amet. Sed luctus tempor nisi et dignissim. Etia",
-    // "Mr. Test", DateTime.Now.Minute
+    public DisplayMessageDto MessageDto { get; set; } = new DisplayMessageDto
+    {
+        Text =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras cursus justo ante, et sollicitudin arcu mollis sit amet. Sed luctus tempor nisi et dignissim. Etia",
+        Username = "Mr. Test",
+        PubDate = (int)new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()
+    };
 
-    [Inject] protected UserState userstate { get; set; }
-    
-    [Inject] protected IFollowService FollowService { get; set; }
+    [Inject] protected UserState Userstate { get; set; } = null!;
 
-    [Inject] private NavigationManager Navigation { get; set; }
+    [Inject] protected IFollowService FollowService { get; set; } = null!;
+
+    [Inject] private NavigationManager Navigation { get; set; } = null!;
 
     protected bool DoseLoggedInUserFollowUser()
     {
-        return FollowService.DoesFollow(userstate.Username, MessageDto.Username).Result;
+        return FollowService.DoesFollow(Userstate.Username!, MessageDto.Username).Result;
     }
 
     protected async Task Follow()
     {
-        await FollowService.Follow(userstate.Username, MessageDto.Username);
+        await FollowService.Follow(Userstate.Username!, MessageDto.Username);
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 
     protected async Task Unfollow()
     {
-        await FollowService.UnFollow(userstate.Username, MessageDto.Username);
+        await FollowService.UnFollow(Userstate.Username!, MessageDto.Username);
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 }
