@@ -7,7 +7,7 @@ namespace Web.Components.Pages;
 public class PublicTimelineBase : ComponentBase
 {
     public IEnumerable<DisplayMessageDto>? Messages { get; set; }
-    [Inject] private IMessageService MessageService { get; set;  } = null!;
+    [Inject] public IMessageService MessageService { get; set;  } = null!;
 
     protected override async Task OnInitializedAsync()
     { 
