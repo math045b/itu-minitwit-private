@@ -28,7 +28,7 @@ jobs:
 
   create-release:
     if: github.event.pull_request.merged == true
-    needs: [check-for-warnings, test]
+    needs: create-tag
     uses: ./.github/workflows/create-release.yml
 
   create-docker-image:
