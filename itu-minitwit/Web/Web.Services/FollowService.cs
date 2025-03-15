@@ -9,19 +9,21 @@ public interface IFollowService
 
 public class FollowService : IFollowService
 {
-    public async Task<bool> DoesFollow(string user, string potentialFollower)
+    public Task<bool> DoesFollow(string user, string potentialFollower)
     {
         //TODO implement
-        return new Random().Next(2) % 2 == 0;
+        return Task.FromResult(new Random().Next(2) % 2 == 0);
     }
 
-    public async Task Follow(string user, string follow)
+    public Task Follow(string user, string follow)
     {
+        return Task.CompletedTask;
         //TODO implement
     }
 
-    public async Task UnFollow(string user, string unFollow)
+    public Task UnFollow(string user, string unFollow)
     {
+        return Task.CompletedTask;
         //TODO implement
     }
 }

@@ -5,9 +5,9 @@ namespace Web.Services.DTO_s;
 
 public class DisplayMessageDto
 {
-    public string Text { get; set; }
-    public string Username { get; set; } 
-    public string GravatarUrl { get; set; }
+    public required string Text { get; set; }
+    public required string Username { get; set; } 
+    //public required string GravatarUrl { get; set; }
     public int PubDate { get; set; }
 
     public DisplayMessageDto()

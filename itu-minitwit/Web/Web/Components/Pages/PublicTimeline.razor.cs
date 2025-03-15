@@ -6,12 +6,12 @@ namespace Web.Components.Pages;
 
 public class PublicTimelineBase : ComponentBase
 {
-    public IEnumerable<DisplayMessageDto> messages { get; set; }
-    [Inject] private IMessageService messageService { get; set;  }
+    public IEnumerable<DisplayMessageDto>? Messages { get; set; }
+    [Inject] private IMessageService MessageService { get; set;  } = null!;
 
     protected override async Task OnInitializedAsync()
     { 
-        messages = await messageService.GetMessages();
+        Messages = await MessageService.GetMessages();
     }
 
 }
