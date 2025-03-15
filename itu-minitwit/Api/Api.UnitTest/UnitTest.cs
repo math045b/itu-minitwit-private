@@ -36,7 +36,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     {
         fixture.ResetDB();
         var dbContext = fixture.GetDbContext();
-        var lastAction = new LatestProcessedSimAction { Id = 230 };
+        var lastAction = new LatestProcessedSimAction { Latest = 230 };
         await dbContext.AddAsync(lastAction);
         await dbContext.SaveChangesAsync();
 
@@ -46,7 +46,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         var latestValue = doc.RootElement.GetProperty("latest").GetInt32();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        Assert.Equal(lastAction.Id, latestValue);
+        Assert.Equal(lastAction.Latest, latestValue);
     }
     
     [Fact]

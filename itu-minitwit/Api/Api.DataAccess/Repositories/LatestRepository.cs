@@ -12,7 +12,7 @@ public class LatestRepository(MinitwitDbContext dbContext) : ILatestRepository
     {
         var latestProcessedCommandId = await dbContext.LatestProcessedSimActions.FirstOrDefaultAsync();
         if (latestProcessedCommandId == null) return -1;
-        return latestProcessedCommandId.Id;
+        return latestProcessedCommandId.Latest;
     }
 
     [LogMethodParameters]
