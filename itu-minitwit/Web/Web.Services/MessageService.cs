@@ -5,7 +5,7 @@ namespace Web.Services;
 public interface IMessageService
 {
     public Task<IEnumerable<DisplayMessageDto>> GetMessages();
-    // public Task<DisplayMessageDto> CreateMessages(CreateClassroomDto dto);
+    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message);
 }
 
 public class MessageService(IMessageRepository messageRepository) : IMessageService
@@ -14,6 +14,8 @@ public class MessageService(IMessageRepository messageRepository) : IMessageServ
     {
         return messageRepository.GetMessages();
     }
-    
-    //TODO: Implement future features for creating messages
+    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message)
+    {
+        return messageRepository.CreateMessage(message);
+    }
 }
