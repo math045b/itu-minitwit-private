@@ -1,6 +1,7 @@
 using Web.Components;
 using Web.DataAccess;
 using Web.Services;
+using Web.Services.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,13 +17,15 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<UserState>();
-builder.Services.AddScoped<IFollowService, FollowService>();
 
 //repository's
 builder.Services.AddHttpClient<IMessageRepository, MessageRepository>();
+builder.Services.AddHttpClient<IUserRepository, UserRepository>();
 
 //services
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IFollowService, FollowService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
