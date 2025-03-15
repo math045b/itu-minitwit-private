@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Route("/")]
+[Route("api/")]
 public class MessageController(IMessageService db, ILatestService latestService, ILogger<MessageController> logger) : Controller
 {
 
@@ -19,7 +19,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
         {
             logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
             await latestService.UpdateLatest(latest);
-            var messages = db.ReadMessages().Result;
+            var messages = await db.ReadMessages();
             logger.LogInformation($"Message count: {messages.Count}");
             logger.LogInformation($"First message: {messages.First()}");
             logger.LogInformation($"Last message: {messages.Last()}");
@@ -35,11 +35,13 @@ public class MessageController(IMessageService db, ILatestService latestService,
     [LogMethodParameters]
     [IgnoreAntiforgeryToken]
     [HttpGet("msgs/{username}")]
-    public async Task<IActionResult> GetFilteredMessages(string username)
+    public async Task<IActionResult> GetFilteredMessages(string username, [FromQuery] int? latest)
     {
-        await latestService.UpdateLatest(1);
         try
         {
+            logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
+            await latestService.UpdateLatest(latest);
+            
             var filteredMessages = await db.ReadFilteredMessages(username, 100);
             if (filteredMessages.Count == 0)
             {
@@ -67,10 +69,13 @@ public class MessageController(IMessageService db, ILatestService latestService,
     [LogReturnValueAsync]
     [IgnoreAntiforgeryToken]
     [HttpPost("msgs/{username}")]
-    public async Task<IActionResult> PostMessage(string username, [FromBody] CreateMessageDTO messageDto)
+    public async Task<IActionResult> PostMessage(string username, [FromBody] CreateMessageDTO messageDto, [FromQuery] int? latest)
     {
         try
         {
+            logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
+            await latestService.UpdateLatest(latest);
+            
             await db.PostMessage(username, messageDto.Content);
             return NoContent();
         }

@@ -5,6 +5,8 @@ using Api.Services.RepositoryInterfaces;
 using Api.Services.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using Serilog;
 using Serilog.Filters;
 using Serilog.Templates;
@@ -17,6 +19,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// OpenTelemetry for exposing metrics for Prometheus
+var resourceBuilder = ResourceBuilder.CreateDefault()
+    .AddService("minitwit-api", serviceVersion: "1.0.0");
+
+builder.Services.AddOpenTelemetry().WithMetrics(providerBuilder =>
+{
+    providerBuilder.SetResourceBuilder(resourceBuilder);
+    providerBuilder.AddAspNetCoreInstrumentation(); // Enables HTTP metrics
+    providerBuilder.AddHttpClientInstrumentation(); // Enables outgoing request metrics
+    providerBuilder.AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel");
+    providerBuilder.AddPrometheusExporter();
+});
+
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 //Repositories
@@ -24,7 +39,6 @@ builder.Services.AddScoped<ILatestRepository, LatestRepository>();
 builder.Services.AddScoped<IFollowRepository, FollowRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
-
 
 //Services
 builder.Services.AddScoped<ILatestService, LatestService>();
@@ -93,6 +107,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//apply pending migration
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<MinitwitDbContext>();
+    context.Database.Migrate();
+    if (!context.LatestProcessedSimActions.Any())
+    {
+        context.LatestProcessedSimActions.Add(new LatestProcessedSimAction { Latest = -1 });
+        context.SaveChanges();
+    }
+}
+
+app.MapPrometheusScrapingEndpoint();
 
 app.UseSerilogRequestLogging();
 

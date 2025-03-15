@@ -1,11 +1,49 @@
 ﻿version: '3.8'
 
+networks:
+  monitoring:
+    driver: bridge
+    
 services:
-  itu-minitwit:
-    image: ${DOCKER_USERNAME}/minitwitimage
-    container_name: minitwit
+  minitwitapi:
     build:
       context: .
-      dockerfile: Dockerfile-minitwit
+      dockerfile: Dockerfile-Api
+    image: jacquespuvis/minitwitimageapi
+    container_name: minitwitapi
     ports:
-      - "8080:5000"
+      - '5000:5000'
+    networks:
+      - monitoring
+    volumes:
+      - db-data:/itu-minitwit/minitwit.Api/data
+      - logs:/itu-minitwit/minitwit.Api/logs
+    depends_on:
+      - grafana
+      - prometheus
+      
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - '9090:9090'
+    networks:
+      - monitoring
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+      
+  grafana:
+    image: 'grafana/grafana:10.2.4'
+    ports:
+      - '3000:3000'
+    networks:
+      - monitoring
+    volumes:
+      - grafana-data:/var/lib/grafana
+      
+volumes:
+  db-data:
+  logs:
+  prometheus-data:
+  grafana-data:

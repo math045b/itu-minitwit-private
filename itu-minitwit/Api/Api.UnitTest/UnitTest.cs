@@ -36,7 +36,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     {
         fixture.ResetDB();
         var dbContext = fixture.GetDbContext();
-        var lastAction = new LatestProcessedSimAction { Id = 230 };
+        var lastAction = new LatestProcessedSimAction { Latest = 230 };
         await dbContext.AddAsync(lastAction);
         await dbContext.SaveChangesAsync();
 
@@ -46,7 +46,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         var latestValue = doc.RootElement.GetProperty("latest").GetInt32();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        Assert.Equal(lastAction.Id, latestValue);
+        Assert.Equal(lastAction.Latest, latestValue);
     }
     
     [Fact]
@@ -62,7 +62,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         await context.SaveChangesAsync();
 
 
-        var response = await client.GetAsync("/msgs");
+        var response = await client.GetAsync("/api/msgs");
         var json = await response.Content.ReadAsStringAsync();
         var messageResponse = JsonConvert.DeserializeObject<List<MessageDto>>(json);
 
@@ -84,7 +84,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
 
         await context.SaveChangesAsync();
 
-        var response = await client.GetAsync("/msgs/Man");
+        var response = await client.GetAsync("/api/msgs/Man");
         var json = await response.Content.ReadAsStringAsync();
         
 
@@ -109,7 +109,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         await context.Users.AddAsync(user);
         await context.SaveChangesAsync();
 
-        var response = await client.GetAsync("/msgs/Man");
+        var response = await client.GetAsync("/api/msgs/Man");
         
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
@@ -138,7 +138,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         );
     
         // Act
-        var response = await client.PostAsync("/msgs/Man", jsonContent);
+        var response = await client.PostAsync("/api/msgs/Man", jsonContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent); // Expecting 204 No Content
@@ -189,7 +189,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         );
 
         // Act
-        var response = await client.PostAsync("/fllws/test", jsonContent);
+        var response = await client.PostAsync("/api/fllws/test", jsonContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -230,7 +230,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
             "application/json"
         );
 
-        var response = await client.PostAsync("/fllws/test", jsonContent);
+        var response = await client.PostAsync("/api/fllws/test", jsonContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -269,7 +269,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
             "application/json"
         );
 
-        var response = await client.PostAsync("/fllws/test", jsonContent);
+        var response = await client.PostAsync("/api/fllws/test", jsonContent);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -319,7 +319,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
             "application/json"
         );
 
-        var response = await client.PostAsync("/fllws/test", jsonContent);
+        var response = await client.PostAsync("/api/fllws/test", jsonContent);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         var user = dbContext.Users.FirstOrDefault(user => user.Username == "test2");
@@ -351,7 +351,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         await dbContext.SaveChangesAsync();
         
         // Act
-        var response = await client.GetAsync("/fllws/test");
+        var response = await client.GetAsync("/api/fllws/test");
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
         var follows = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(json);
@@ -375,7 +375,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync("/register", content);
+        var response = await client.PostAsync("/api/register", content);
 
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
@@ -397,7 +397,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
 
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync("/register", content);
+        var response = await client.PostAsync("/api/register", content);
 
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
@@ -419,7 +419,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
 
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync("/register", content);
+        var response = await client.PostAsync("/api/register", content);
 
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
@@ -452,7 +452,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync("/register", content);
+        var response = await client.PostAsync("/api/register", content);
 
         var json = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(json);
@@ -475,7 +475,7 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         
         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync("/register", content);
+        var response = await client.PostAsync("/api/register", content);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         var user = dbContext.Users.FirstOrDefault(user => user.Username == "test");

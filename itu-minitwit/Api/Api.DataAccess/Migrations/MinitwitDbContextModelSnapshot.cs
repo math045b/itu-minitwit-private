@@ -37,6 +37,9 @@ namespace Api.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Latest")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("LatestProcessedSimActions");
