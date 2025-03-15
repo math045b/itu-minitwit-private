@@ -1,0 +1,44 @@
+@inherits CreateMessageBase
+@rendermode InteractiveServer
+
+<div class="mb-3">
+    <label for="message" class="form-label">Write a message</label>
+    <textarea id="message" class="form-control" @bind="message" maxlength="160"></textarea>
+    <div class="form-text">@($"{160 - message.Length} characters remaining")</div>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="text-danger">@errorMessage</div>
+    }
+</div>
+
+<button class="btn btn-primary" @onclick="SubmitMessage">Send</button>
+
+@code {
+    private string message = "";
+    private string errorMessage = "";
+
+    [Parameter] public EventCallback OnMessageCreated { get; set; }
+
+    private void ValidateMessage(ChangeEventArgs e)
+    {
+        message = e.Value?.ToString() ?? "";
+        if (message.Length > 160)
+        {
+            errorMessage = "Message cannot exceed 160 characters.";
+            message = message.Substring(0, 160);
+        }
+        else
+        {
+            errorMessage = "";
+        }
+    }
+
+    private async Task SubmitMessage()
+    {
+        if (string.IsNullOrEmpty(errorMessage) && !string.IsNullOrWhiteSpace(message))
+        {
+            await CreateMessage(message);
+            await OnMessageCreated.InvokeAsync();
+        }
+    }
+}
