@@ -1,7 +1,4 @@
-﻿using Api.Controllers;
-using Web.DataAccess;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components;
 using Web.Services;
 using Web.Services.DTO_s;
 

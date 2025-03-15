@@ -7,9 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Api\Api.Services\Api.Services.csproj" />
-        <ProjectReference Include="..\..\Api\Api\Api.csproj" />
-        <ProjectReference Include="..\..\Web.DataAccess\Web.DataAccess.csproj" />
+        <ProjectReference Include="..\Web.DataAccess\Web.DataAccess.csproj" />
         <ProjectReference Include="..\Web.Services\Web.Services.csproj"/>
     </ItemGroup>
 
