@@ -23,7 +23,7 @@ jobs:
 
   create-tag:
     if: github.event.pull_request.merged == true
-    needs: test
+    needs: [check-for-warnings, test]
     uses: ./.github/workflows/Create-tag-on-merge.yml
 
   create-release:
