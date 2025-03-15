@@ -3,12 +3,22 @@ using System.Text;
 
 namespace Web.Services.DTO_s;
 
-public class DisplayMessageDto(string message, string username, string email,  DateTime pubDate)
+public class DisplayMessageDto
 {
-    public string Message { get; } = message;
-    public string Username { get; } = username;
-    public string GravatarUrl { get; } = GetGravatarUrl(email);
-    public DateTime PubDate { get; } = pubDate;
+    public string Text { get; set; }
+    public string Username { get; set; } 
+    public string GravatarUrl { get; set; }
+    public int PubDate { get; set; }
+
+    public DisplayMessageDto()
+    {
+        
+    }
+    
+
+    //{"Username":"test123","Text":"this is a test","PubDate":1741947254,"$type":"DisplayMessageDTO"}
+    
+    
     
     private static string GetGravatarUrl(string email, int size = 150)
     {

@@ -1,7 +1,15 @@
 using Web.Components;
+using Web.DataAccess;
 using Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load environment-specific appsettings.json, into the program configuration
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -10,6 +18,11 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<UserState>();
 builder.Services.AddScoped<IFollowService, FollowService>();
 
+//repository's
+builder.Services.AddHttpClient<IMessageRepository, MessageRepository>();
+
+//services
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 var app = builder.Build();
 
