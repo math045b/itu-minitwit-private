@@ -1,6 +1,8 @@
 ﻿@page "/"
 @inherits PublicTimelineBase
 @attribute [StreamRendering]
+@rendermode InteractiveServer
+
 <h3>PublicTimeline</h3>
 
 <CreateMessage OnMessageCreated="RefreshMessages"></CreateMessage>
