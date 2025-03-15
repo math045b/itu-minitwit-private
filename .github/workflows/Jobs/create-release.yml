@@ -1,5 +1,4 @@
-#This aumtomaticly release when a pul request to main is accepted
-name: Automatic release on tag creation
+name: Release
 permissions: write-all
 
 on:
@@ -29,34 +28,34 @@ jobs:
       - name: Restore dependencies
         run: |
           dotnet restore /Api
-          dotnet restore /Web
+        #  dotnet restore /Web
       
       #### Getting timechart with GitScraper image #####
-      - name: Log in to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      #- name: Log in to Docker Hub
+      #  run: |
+      #    echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       
       
-      - name: Pull and run GitScraper container
-        run: |
-          docker pull rasmusrlarsen/gitscraper:latest
-          docker run -d -p 8080:8080 rasmusrlarsen/gitscraper:latest
-          sleep 10
+      #- name: Pull and run GitScraper container
+      #  run: |
+      #    docker pull rasmusrlarsen/gitscraper:latest
+      #    docker run -d -p 8080:8080 rasmusrlarsen/gitscraper:latest
+      #    sleep 10
 
-      - name: Fetch chart
-        run: |
-          RESPONSE_HEADERS=$(mktemp)
-          curl -L -s -o timechart.png -D $RESPONSE_HEADERS \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "http://localhost:8080/generate-chart?org=ITU-DevOps2025-GROUP-A&repo=itu-minitwit"
+      #- name: Fetch chart
+      #  run: |
+      #    RESPONSE_HEADERS=$(mktemp)
+      #    curl -L -s -o timechart.png -D $RESPONSE_HEADERS \
+      #      -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+      #      "http://localhost:8080/generate-chart?org=ITU-DevOps2025-GROUP-A&repo=itu-minitwit"
 
-          CONTENT_TYPE=$(grep -i "Content-Type:" $RESPONSE_HEADERS | awk '{print $2}' | tr -d '\r')
+       #   CONTENT_TYPE=$(grep -i "Content-Type:" $RESPONSE_HEADERS | awk '{print $2}' | tr -d '\r')
 
-          if [[ "$CONTENT_TYPE" != "image/png" ]]; then
-            echo "Error: The response is not an image. Possible API failure."
-            cat timechart.png  # Show what was saved for debugging
-            exit 1
-          fi
+       #   if [[ "$CONTENT_TYPE" != "image/png" ]]; then
+        #    echo "Error: The response is not an image. Possible API failure."
+         #   cat timechart.png  # Show what was saved for debugging
+         #   exit 1
+         # fi
         ##### Gotten Chart #####
       
       - name: Get latest tag
@@ -90,6 +89,6 @@ jobs:
             /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-linux-x64.zip
             /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-win-x64.zip
             /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-osx-x64.zip
-            timechart.png
+        # timechart.png
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
