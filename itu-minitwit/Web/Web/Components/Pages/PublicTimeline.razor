@@ -3,11 +3,17 @@
 @attribute [StreamRendering]
 <h3>PublicTimeline</h3>
 
+<CreateMessage OnMessageCreated="RefreshMessages"></CreateMessage>
+
 @if (Messages != null)
 {
     <MessageView Messages="Messages"></MessageView>
 }
 
 @code {
-    
+    private async Task RefreshMessages()
+    {
+        Messages = await MessageService.GetMessages();
+        StateHasChanged();
+    }
 }
