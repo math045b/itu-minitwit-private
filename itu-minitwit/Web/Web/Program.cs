@@ -4,11 +4,16 @@ using Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment-specific appsettings.json, into the program configuration
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
-
 
 builder.Services.AddSingleton<UserState>();
 builder.Services.AddScoped<IFollowService, FollowService>();

@@ -1,11 +1,13 @@
 ﻿using System.Net.Http.Json;
+using Microsoft.Extensions.Configuration;
 using Web.DataAccess.Abstract;
 using Web.Services; 
 using Web.Services.DTO_s;
 
 namespace Web.DataAccess;
 
-public class MessageRepository(HttpClient httpClient) : BaseAPIRepository(httpClient), IMessageRepository
+public class MessageRepository(HttpClient httpClient, IConfiguration configuration) : 
+    BaseAPIRepository(httpClient, configuration), IMessageRepository
 {
     private string Endpoint { get; } = "/msgs";
 

@@ -1,12 +1,15 @@
 using System.Net.Http.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace Web.DataAccess.Abstract;
 
-public abstract class BaseAPIRepository(HttpClient httpClient)
+public abstract class BaseAPIRepository(HttpClient httpClient,  IConfiguration configuration)
 {
     protected HttpClient HttpClient { get; } = httpClient;
-    protected string ApiBaseUrl = "http://localhost:5000"; //TODO: change url to remote url
-    
+    protected string ApiBaseUrl { get; } = configuration["ApiSettings:BaseUrl"]
+                                           ?? throw new ArgumentException("Cant find api url");
+
+
     public async Task<IEnumerable<T>> GetAllAsync<T>(string endpoint)
     {
         var response = await HttpClient.GetAsync($"{ApiBaseUrl}{endpoint}");
@@ -15,7 +18,7 @@ public abstract class BaseAPIRepository(HttpClient httpClient)
         var list = await response.Content.ReadFromJsonAsync<IEnumerable<T>>();
         return list ?? [];
     }
-    
+
     public async Task<T> GetOneAsync<T, TId>(string endpoint, TId id)
     {
         var response = await HttpClient.GetAsync($"{ApiBaseUrl}/{endpoint}/{id}");
