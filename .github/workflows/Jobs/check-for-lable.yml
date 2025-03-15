@@ -1,0 +1,26 @@
+name: Check for label on pull request
+
+on:
+  workflow_call:
+
+jobs:
+  check-labels:
+    runs-on: ubuntu-latest
+    
+    steps:  
+      - name: Get PR labels
+        run: |
+          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          echo "PR_LABELS=$PR_LABELS" >> $GITHUB_ENV
+          echo "Labels fetched: $PR_LABELS"
+
+      - name: Calculate number of labels
+        run: |
+          LABEL_COUNT=$(echo "$PR_LABELS" | awk -F',' '{print NF}')
+          echo "LABEL_COUNT=$LABEL_COUNT" >> $GITHUB_ENV
+      
+      - name: Dosent contains label
+        if: ${{ env.LABEL_COUNT == '0' }}
+        run: |
+          echo "The pull request needs a label."
+          exit 1 # This fails the action
