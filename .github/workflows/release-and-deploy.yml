@@ -11,11 +11,15 @@ jobs:
   check-for-warnings:
     uses: ./.github/workflows/jobs/check-for-warnings.yml
 
-  build-and-test:
-    uses: ./.github/workflows/jobs/build-and-test.yml
+  build:
+    uses: ./.github/workflows/jobs/build.yml
+
+  test:
+    needs: build
+    uses: ./.github/workflows/jobs/test.yml
 
   create-tag:
-    needs: [check-for-warnings, build-and-test]
+    needs: [check-for-warnings, test]
     uses: ./.github/workflows/jobs/Create-tag-on-merge.yml
 
   create-release:
@@ -23,7 +27,7 @@ jobs:
     uses: ./.github/workflows/jobs/create-release.yml
 
   create-docker-image:
-    needs: [check-for-warnings, build-and-test]
+    needs: [check-for-warnings, test]
     uses: ./.github/workflows/jobs/create-docker-image.yml
 
   deploy-to-digitalocean:

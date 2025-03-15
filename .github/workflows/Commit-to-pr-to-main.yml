@@ -7,8 +7,12 @@ on:
       - main
 
 jobs:
-  build-and-test:
-    uses: ./.github/workflows/jobs/build-and-test.yml
-
   check-for-warnings:
     uses: ./.github/workflows/jobs/check-for-warnings.yml
+
+  build:
+    uses: ./.github/workflows/jobs/build.yml
+
+  test:
+    needs: build
+    uses: ./.github/workflows/jobs/test.yml
