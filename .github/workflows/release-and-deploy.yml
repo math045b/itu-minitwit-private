@@ -8,22 +8,23 @@ on:
       - main
 
 jobs:
+  create-tag:
+    uses: ./.github/workflows/Create-tag-on-merge.yml
+
   check-for-warnings:
+    needs: create-tag
     uses: ./.github/workflows/check-for-warnings.yml
 
   build:
+    needs: create-tag
     uses: ./.github/workflows/build.yml
 
   test:
     needs: build
     uses: ./.github/workflows/test.yml
 
-  create-tag:
-    needs: [check-for-warnings, test]
-    uses: ./.github/workflows/Create-tag-on-merge.yml
-
   create-release:
-    needs: create-tag
+    needs: [check-for-warnings, test]
     uses: ./.github/workflows/create-release.yml
 
   create-docker-image:
