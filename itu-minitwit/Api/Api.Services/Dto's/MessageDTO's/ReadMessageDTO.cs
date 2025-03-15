@@ -8,4 +8,15 @@ public class ReadMessageDTO
     public int AuthorId { get; set; } public string Content { get; set; }
     public int? PubDate { get; set; }
     public int? Flagged { get; set; }
+    
+    public override string ToString()
+    {
+        return "ReadMessageDTO{" +
+               $"MessageId={MessageId}" +
+               $", AuthorId={AuthorId}" +
+               $", Content='{Content}'" +
+               $", PubDate={PubDate}" +
+               $", Flagged={Flagged}" +
+               '}';
+    }
 }

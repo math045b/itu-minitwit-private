@@ -1,0 +1,35 @@
+name: Release and deploy
+permissions: write-all
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  check-for-warnings:
+    uses: ./.github/workflows/jobs/check-for-warnings.yml
+
+  build:
+    uses: ./.github/workflows/jobs/build.yml
+
+  test:
+    needs: build
+    uses: ./.github/workflows/jobs/test.yml
+
+  create-tag:
+    needs: [check-for-warnings, test]
+    uses: ./.github/workflows/jobs/Create-tag-on-merge.yml
+
+  create-release:
+    needs: create-tag
+    uses: ./.github/workflows/jobs/create-release.yml
+
+  create-docker-image:
+    needs: [check-for-warnings, test]
+    uses: ./.github/workflows/jobs/create-docker-image.yml
+
+  deploy-to-digitalocean:
+    needs: create-docker-image
+    uses: ./.github/workflows/jobs/deploy-to-digitalocean.yml

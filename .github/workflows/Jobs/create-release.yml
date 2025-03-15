@@ -1,0 +1,94 @@
+name: Release
+permissions: write-all
+
+on:
+  workflow_call:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    defaults: 
+      run:
+        working-directory: itu-minitwit/
+    permissions: 
+     contents: write
+     actions: read
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 #Fetch all history and tags
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore /Api
+        #  dotnet restore /Web
+      
+      #### Getting timechart with GitScraper image #####
+      #- name: Log in to Docker Hub
+      #  run: |
+      #    echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      
+      
+      #- name: Pull and run GitScraper container
+      #  run: |
+      #    docker pull rasmusrlarsen/gitscraper:latest
+      #    docker run -d -p 8080:8080 rasmusrlarsen/gitscraper:latest
+      #    sleep 10
+
+      #- name: Fetch chart
+      #  run: |
+      #    RESPONSE_HEADERS=$(mktemp)
+      #    curl -L -s -o timechart.png -D $RESPONSE_HEADERS \
+      #      -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+      #      "http://localhost:8080/generate-chart?org=ITU-DevOps2025-GROUP-A&repo=itu-minitwit"
+
+       #   CONTENT_TYPE=$(grep -i "Content-Type:" $RESPONSE_HEADERS | awk '{print $2}' | tr -d '\r')
+
+       #   if [[ "$CONTENT_TYPE" != "image/png" ]]; then
+        #    echo "Error: The response is not an image. Possible API failure."
+         #   cat timechart.png  # Show what was saved for debugging
+         #   exit 1
+         # fi
+        ##### Gotten Chart #####
+      
+      - name: Get latest tag
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")  # Get latest tag or default to v0.0.0
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          echo "Current latest tag is $LATEST_TAG"
+      
+      - name: release for all platforms
+        working-directory: /Api/Api
+        run: |
+          dotnet publish --runtime linux-x64 -p:PublishSingleFile=true --self-contained true
+          dotnet publish --runtime win-x64 -p:PublishSingleFile=true --self-contained true
+          dotnet publish --runtime osx-x64 -p:PublishSingleFile=true --self-contained true
+          
+      # Create ZIP files
+      - name: Zip the output
+        working-directory: /Api/Api/bin/Release/net8.0/
+        run: |
+          zip -r api-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/Api
+          zip -r api-${{ env.LATEST_TAG }}-win-x64.zip win-x64/publish/Api.exe
+          zip -r api-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/Api
+
+      # Upload the release artifacts and create the release
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.LATEST_TAG }}
+          name: Release ${{ env.LATEST_TAG }}  # Set release name
+          files: |
+            /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-linux-x64.zip
+            /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-win-x64.zip
+            /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-osx-x64.zip
+        # timechart.png
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

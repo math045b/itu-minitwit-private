@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Route("[Controller]")]
+[Route("api/")]
 [ApiController]
 public class FollowerController(IFollowService followService, ILatestService latestService, ILogger<FollowerController> logger) : ControllerBase
 {
     [LogMethodParameters]
     [LogReturnValueAsync]
-    [HttpPost("/fllws/{username}")]
+    [HttpPost("fllws/{username}")]
     public async Task<ActionResult> FollowOrUnfollow(string username, [FromBody] FollowDTO followDto, [FromQuery] int? latest)
     {
         try
@@ -65,11 +65,6 @@ public class FollowerController(IFollowService followService, ILatestService lat
             logger.LogError(e, "User does not exists");
             return NotFound(e.Message);
         }
-        catch (AlreadyFollowsUserException e)
-        {
-            logger.LogError(e, $"\"{username}\" already follows \"{follow}\"");
-            return BadRequest(e.Message);
-        }
 
         return NoContent();
     }
@@ -87,18 +82,13 @@ public class FollowerController(IFollowService followService, ILatestService lat
             logger.LogError(e, "User does not exists");
             return NotFound(e.Message);
         }
-        catch (DontFollowUserException e)
-        {
-            logger.LogError(e, $"\"{username}\" does not follow \"{unfollow}\"");
-            return BadRequest(e.Message);
-        }
 
         return NoContent();
     }
 
     [LogMethodParameters]
     [LogReturnValueAsync]
-    [HttpGet("/fllws/{username}")]
+    [HttpGet("fllws/{username}")]
     public async Task<IActionResult> GetFollows(string username, [FromQuery] int? latest, [FromQuery] int no = 100)
     {
         try
@@ -111,7 +101,7 @@ public class FollowerController(IFollowService followService, ILatestService lat
         }
         catch (UserDoesntExistException e)
         {
-            logger.LogError(e, "\"{username}\" does not exists");
+            logger.LogError(e, $"\"{username}\" does not exists");
             return NotFound(new { message = e.Message });
         }
         catch (Exception e)

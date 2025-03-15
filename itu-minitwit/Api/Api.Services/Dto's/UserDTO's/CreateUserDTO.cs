@@ -7,4 +7,13 @@ public class CreateUserDTO
     public string Email { get; set; } = null!;
 
     public string Pwd { get; set; } = null!;
+
+    public override string ToString()
+    {
+        return "CreateUserDTO{" +
+               $"Username='{Username}', " +
+               $"Email='{Email}', " +
+               $"Pwd='{Pwd}'" +
+               '}';
+    }
 }

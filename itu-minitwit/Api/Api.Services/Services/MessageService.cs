@@ -14,14 +14,12 @@ public interface IMessageService
 public class MessageService(IMessageRepository repository) : IMessageService
 {
     [LogMethodParameters]
-    [LogReturnValue]
     public Task<List<DisplayMessageDTO>> ReadMessages()
     {
         return repository.ReadMessages();
     }
     
     [LogMethodParameters]
-    [LogReturnValue]
     public Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize)
     {
         return repository.ReadFilteredMessages(username, pagesize);
