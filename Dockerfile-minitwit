@@ -2,41 +2,37 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Set working directory
-WORKDIR /itu-minitwit/Web
+WORKDIR /app
 
 # Copy project file(s) and restore dependencies
-COPY /itu-minitwit/Web/Web/Web.csproj ./Web/
-COPY /itu-minitwit/Web/Web.Services/Web.Services.csproj ./Web.Services/
-COPY /itu-minitwit/Web/Web.DataAccess/Web.DataAccess.csproj ./Web.DataAccess/
+COPY ./itu-minitwit/Web/Web/*.csproj ./Web/
+COPY ./itu-minitwit/Web/Web.Services/*.csproj ./Web.Services/
+COPY ./itu-minitwit/Web/Web.DataAccess/*.csproj ./Web.DataAccess/
 
-# Copy the rest of the application source code
-COPY /itu-minitwit/Web/Web ./Web
-COPY /itu-minitwit/Web/Web.Services ./Web.Services
-COPY /itu-minitwit/Web/Web.DataAccess ./Web.DataAccess
+COPY ./itu-minitwit/Web/Web ./Web/
+COPY ./itu-minitwit/Web/Web.Services ./Web.Services/
+COPY ./itu-minitwit/Web/Web.DataAccess ./Web.DataAccess/
 
-WORKDIR /itu-minitwit/Web/Web
+WORKDIR /app/Web
 RUN dotnet restore --no-cache
 
 # Build and publish the application
 RUN dotnet publish -c Release -o /out
 
-# Use .NET runtime image for final container
+# Use .NET runtime image for final container (Sets port to 8080)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
-# Install SQLite
-RUN apt update && apt install -y sqlite3
+# Install curl
+RUN apt update && apt install -y curl
 
 # Set working directory
-WORKDIR /itu-minitwit/Web
+WORKDIR /itu-minitwit/minitwit.Web
 
 # Copy published files from build stage
 COPY --from=build /out ./
 
-# Copy the database file and set permissions
-#RUN mkdir -p ./data
-
-# Set environment variable to listen on port 8080
-#ENV ASPNETCORE_URLS=http://+:8080
+# Set environment variable to Production
+ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Set entrypoint to run the app
 ENTRYPOINT ["dotnet", "Web.dll"]
