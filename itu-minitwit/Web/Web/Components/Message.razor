@@ -5,9 +5,9 @@
 <div class="card mb-3" style="max-width: 1000px;">
     <div class="card-header d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center">
-            @* <img src="@MessageDto.GravatarUrl" class="rounded-circle me-3" alt="User Image" style="width: 40px; height: 40px;"> *@
+            <img src="@MessageDto.GetGravatarUrl()" class="rounded-circle me-3" alt="User Image" style="width: 40px; height: 40px;">
             <h5 class="card-title mb-0">
-                <a href="/PrivateTimeline/@MessageDto.Username" class="card-link">@MessageDto.Username</a>
+                <a href="/timeline/@MessageDto.Username" class="card-link">@MessageDto.Username</a>
             </h5>
         </div>
         @if (Userstate.IsLoggedIn && Userstate.Username != MessageDto.Username)
