@@ -2,6 +2,9 @@
 
 public class User
 {
+    // Navigation property
+    public ICollection<Message>? Messages { get; set; }
+    
     public int UserId { get; set; }
 
     public string Username { get; set; } = null!;
