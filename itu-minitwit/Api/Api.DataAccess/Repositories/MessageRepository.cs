@@ -45,7 +45,28 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
                 PubDate = m.PubDate,
             })
             .ToListAsync();
+    public async Task<List<DisplayMessageDTO>> ReadFilteredMessagesFromUserAndFollows(string username, int pagesize = 100)
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user == null) throw new UserDoesntExistException($"User \"{username}\" not found");
+
+        if(!await dbContext.Messages.AnyAsync()) return Enumerable.Empty<DisplayMessageDTO>().ToList();
         
+        return await dbContext.Messages
+            .Where(m => m.Flagged == 0 &&
+                        (m.AuthorId == user.UserId ||
+                         dbContext.Followers.Any(f => f.WhoId == user.UserId && f.WhomId == m.AuthorId)))
+            .OrderByDescending(m => m.PubDate)
+            .Take(pagesize)
+            .Include(m => m.Author)
+            .Select(m => new DisplayMessageDTO
+            {
+                Username = m.Author!.Username,
+                Email = m.Author!.Email,
+                Text = m.Text,
+                PubDate = m.PubDate,
+            })
+            .ToListAsync();
     }
     
     [LogMethodParameters]
