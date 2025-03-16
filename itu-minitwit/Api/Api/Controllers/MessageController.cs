@@ -99,7 +99,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
             var messages = await db.ReadFilteredMessagesFromUserAndFollows(username, no);
             return Ok(messages);
         }
-        catch (UserDoesntExistException e)
+        catch (UserDoesntExistException)
         {
             return NotFound("User doesn't exist");
         }
