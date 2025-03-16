@@ -9,7 +9,7 @@
                 @if (Userstate.IsLoggedIn)
                 {
                     <li class="nav-item">
-                        <NavLink class="nav-link" href="PrivateTimeline">Your Timeline</NavLink>
+                        <NavLink class="nav-link" href=@($"/{Userstate.Username}")>Your Timeline</NavLink>
                     </li>
                     <li class="nav-item">
                         <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Public Timeline</NavLink>
