@@ -26,4 +26,15 @@ public class UserRepository(MinitwitDbContext db, IPasswordHasher<User> password
         return new ReadUserDTO()
             { UserId = createdUser.Entity.UserId, Username = user.Username, Email = user.Email };
     }
+
+    public async Task<bool> Login(LoginUserDTO dto)
+    {
+        if (!await db.Users.AnyAsync(u => u.Username == dto.Username)) return false;
+
+        var user = (await db.Users.Where(u => u.Username == dto.Username).FirstOrDefaultAsync())!;
+        var verifyHashedPassword
+            = passwordHasher.VerifyHashedPassword(user, user.PwHash, dto.Password);
+
+        return verifyHashedPassword != PasswordVerificationResult.Failed;
+    }
 }
