@@ -13,7 +13,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
     [LogMethodParameters]
     [IgnoreAntiforgeryToken]
     [HttpGet("msgs")]
-    public async Task<IActionResult> GetMessages([FromQuery] int? latest)
+    public async Task<IActionResult> GetMessages([FromQuery] int? latest, [FromQuery] int no = 100)
     {
         try
         {
@@ -35,7 +35,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
     [LogMethodParameters]
     [IgnoreAntiforgeryToken]
     [HttpGet("msgs/{username}")]
-    public async Task<IActionResult> GetFilteredMessages(string username, [FromQuery] int? latest)
+    public async Task<IActionResult> GetFilteredMessages(string username, [FromQuery] int? latest, [FromQuery] int no = 100)
     {
         try
         {
@@ -53,9 +53,9 @@ public class MessageController(IMessageService db, ILatestService latestService,
             logger.LogInformation($"Last message: {filteredMessages.Last()}");
             return Ok(filteredMessages);
         }
-        catch (KeyNotFoundException e)
+        catch (UserDoesntExistException e)
         {
-            logger.LogError(e, "Couldn't find key");
+            logger.LogError(e, $"Couldn't find user: {username}");
             return NotFound(new { message = e.Message });
         }
         catch (Exception e)
