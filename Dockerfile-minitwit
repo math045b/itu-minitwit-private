@@ -9,14 +9,13 @@ COPY /itu-minitwit/Web/Web/Web.csproj ./Web/
 COPY /itu-minitwit/Web/Web.Services/Web.Services.csproj ./Web.Services/
 COPY /itu-minitwit/Web/Web.DataAccess/Web.DataAccess.csproj ./Web.DataAccess/
 
-WORKDIR /itu-minitwit/Web/Web
-RUN dotnet restore --no-cache
-
 # Copy the rest of the application source code
 COPY /itu-minitwit/Web/Web ./Web
 COPY /itu-minitwit/Web/Web.Services ./Web.Services
-COPY /itu-minitwit/Web/Web.DataAccess ./Web.DataAccess/
+COPY /itu-minitwit/Web/Web.DataAccess ./Web.DataAccess
 
+WORKDIR /itu-minitwit/Web/Web
+RUN dotnet restore --no-cache
 
 # Build and publish the application
 RUN dotnet publish -c Release -o /out
@@ -34,10 +33,10 @@ WORKDIR /itu-minitwit/Web
 COPY --from=build /out ./
 
 # Copy the database file and set permissions
-RUN mkdir -p ./data
+#RUN mkdir -p ./data
 
 # Set environment variable to listen on port 8080
-ENV ASPNETCORE_URLS=http://+:8080
+#ENV ASPNETCORE_URLS=http://+:8080
 
 # Set entrypoint to run the app
 ENTRYPOINT ["dotnet", "Web.dll"]
