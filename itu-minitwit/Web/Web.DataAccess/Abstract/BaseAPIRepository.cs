@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using Microsoft.Extensions.Configuration;
 
@@ -26,13 +27,28 @@ public abstract class BaseAPIRepository(HttpClient httpClient,  IConfiguration c
         return (await response.Content.ReadFromJsonAsync<T>())!;
     }
     
-    public async Task<T> CreateAsync<T,TD>(string endpoint, TD data)
+    public async Task<T> CreateAsync<T, TD>(string endpoint, string username, TD data, int? latest = null)
     {
-        var response = await HttpClient.PostAsJsonAsync($"{ApiBaseUrl}{endpoint}", data);
-        response.EnsureSuccessStatusCode();
-        return (await response.Content.ReadFromJsonAsync<T>())!;
-    }
+        string url = $"{ApiBaseUrl}/{endpoint}/{username}";
 
+        if (latest.HasValue)
+        {
+            url += $"?latest={latest.Value}";
+        }
+
+        //Console.WriteLine($"Blazor is calling: {url}"); // Debugging output
+
+        var response = await HttpClient.PostAsJsonAsync(url, data);
+        response.EnsureSuccessStatusCode();
+
+        if (response.StatusCode == HttpStatusCode.NoContent)
+        {
+            return default!; // ✅ Return null or an empty object for 204 responses
+        }
+
+        return await response.Content.ReadFromJsonAsync<T>() ?? throw new InvalidOperationException();
+
+    }
     public async Task UpdateAsync<TId, TD>(string endpoint, TId id, TD data)
     {
         var response = await HttpClient.PutAsJsonAsync($"{ApiBaseUrl}/{endpoint}/{id}", data);
