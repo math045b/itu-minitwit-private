@@ -15,11 +15,6 @@ public class DisplayMessageDto
         
     }
     
-
-    //{"Username":"test123","Text":"this is a test","PubDate":1741947254,"$type":"DisplayMessageDTO"}
-    
-    
-    
     private static string GetGravatarUrl(string email, int size = 150)
     {
         var hash = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(email.Trim().ToLower()));
