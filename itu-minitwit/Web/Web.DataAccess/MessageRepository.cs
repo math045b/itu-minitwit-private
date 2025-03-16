@@ -16,8 +16,8 @@ public class MessageRepository(HttpClient httpClient, IConfiguration configurati
         return GetAllAsync<DisplayMessageDto>(Endpoint);
     }
     
-    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message)
+    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message, string Username)
     {
-        return CreateAsync<DisplayMessageDto, CreateMessageDto>(Endpoint, message);
+        return CreateAsync<DisplayMessageDto, CreateMessageDto>(Endpoint, Username, message);
     }
 }

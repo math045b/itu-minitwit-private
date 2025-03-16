@@ -6,5 +6,5 @@ public interface IMessageRepository
 {
     public Task<IEnumerable<DisplayMessageDto>> GetMessages();
     
-    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message);
+    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message, string Username);
 }
