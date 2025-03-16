@@ -1,44 +1,35 @@
 @inherits CreateMessageBase
 @rendermode InteractiveServer
 
-<div class="mb-3">
-    <label for="message" class="form-label">Write a message</label>
-    <textarea id="message" class="form-control" @bind="message" maxlength="160"></textarea>
-    <div class="form-text">@($"{160 - message.Length} characters remaining")</div>
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="text-danger">@errorMessage</div>
-    }
-</div>
+@if (UserState.IsLoggedIn)
+{
+    <div class="card shadow-sm w-100" style="max-width: 100%; max-height: 75%; margin: 20px auto;">
+        <div class="card-header">
+            <h5 class="mb-0"> @UserState.Username </h5>
+        </div>
+        <div class="card-body">
+            <label for="message" class="form-label">Your Message</label>
+            <textarea
+            id="message"
+            @bind="Message"
+            @oninput="OnInputHandler"
+            rows="4"
+            class="form-control"
+            placeholder="Write your message here..."
+        ></textarea>
+            <div class="form-text text-end">@($"{160 - Message.Length} characters remaining")</div>
+        </div>
 
-<button class="btn btn-primary" @onclick="SubmitMessage">Send</button>
+        <div class="card-footer text-end">
+            <button class="btn btn-primary" @onclick="PostMessage">Send</button>
+        </div>
 
-@code {
-    private string message = "";
-    private string errorMessage = "";
-
-    [Parameter] public EventCallback OnMessageCreated { get; set; }
-
-    private void ValidateMessage(ChangeEventArgs e)
-    {
-        message = e.Value?.ToString() ?? "";
-        if (message.Length > 160)
+        <!-- Show feedback message -->
+        @if (!string.IsNullOrEmpty(StatusMessage))
         {
-            errorMessage = "Message cannot exceed 160 characters.";
-            message = message.Substring(0, 160);
+            <div class="alert @(!StatusMessage.StartsWith("Error") ? "alert-success" : "alert-danger") mt-3">
+                @StatusMessage
+            </div>
         }
-        else
-        {
-            errorMessage = "";
-        }
-    }
-
-    private async Task SubmitMessage()
-    {
-        if (string.IsNullOrEmpty(errorMessage) && !string.IsNullOrWhiteSpace(message))
-        {
-            await CreateMessage(message);
-            await OnMessageCreated.InvokeAsync();
-        }
-    }
+    </div>
 }
