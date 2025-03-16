@@ -1,6 +1,24 @@
-﻿@page "/PrivateTimeline/{Author}"
-<h3>PrivateTimeline</h3>
+﻿@page "/{Author}"
+@inherits PrivateTimelineBase
+@rendermode InteractiveServer
 
-@code {
-    
+@if (UserState.IsLoggedIn && Author == UserState.Username)
+{
+    <h3>Your timeline</h3>
+
 }
+else
+{
+    <h3>@Author's timeline</h3>
+}
+@if (Messages != null)
+{
+    <MessageView Messages="Messages"></MessageView>
+}
+else
+{
+    <p>Loading ...</p>
+}
+
+
+
