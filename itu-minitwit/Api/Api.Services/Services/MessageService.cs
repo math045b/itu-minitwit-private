@@ -7,6 +7,7 @@ public interface IMessageService
 {
     public Task<List<DisplayMessageDTO>> ReadMessages();
     public Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize);
+    public Task<List<DisplayMessageDTO>> ReadFilteredMessagesFromUserAndFollows(string username, int pagesize);
 
     public Task<bool> PostMessage(string username, string content);
 }
@@ -23,6 +24,11 @@ public class MessageService(IMessageRepository repository) : IMessageService
     public Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize)
     {
         return repository.ReadFilteredMessages(username, pagesize);
+    }
+
+    public Task<List<DisplayMessageDTO>> ReadFilteredMessagesFromUserAndFollows(string username, int pagesize)
+    {
+        return repository.ReadFilteredMessagesFromUserAndFollows(username, pagesize);
     }
 
     [LogMethodParameters]
