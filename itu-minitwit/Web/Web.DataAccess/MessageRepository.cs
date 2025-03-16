@@ -9,7 +9,7 @@ namespace Web.DataAccess;
 public class MessageRepository(HttpClient httpClient, IConfiguration configuration) : 
     BaseAPIRepository(httpClient, configuration), IMessageRepository
 {
-    private string Endpoint { get; } = "/msgs";
+    private string Endpoint { get; } = "msgs";
 
     public Task<IEnumerable<DisplayMessageDto>> GetMessages()
     {
