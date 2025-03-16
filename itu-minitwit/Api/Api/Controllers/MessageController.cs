@@ -1,6 +1,7 @@
 using Api.Services.Dto_s.MessageDTO_s;
 using Microsoft.AspNetCore.Mvc;
 using Api.Services;
+using Api.Services.Exceptions;
 using Api.Services.Services;
 
 namespace Api.Controllers;
@@ -87,6 +88,20 @@ public class MessageController(IMessageService db, ILatestService latestService,
         {
             logger.LogError(e, "An error occured, that we did have not accounted for");
             return StatusCode(500, "An error occured, that we did not for see");
+        }
+    }
+
+    [HttpGet("msgs/fllws/{username}")]
+    public async Task<IActionResult> GetFilteredMessagesForUserAndFollows(string username, [FromQuery] int no = 100)
+    {
+        try
+        {
+            var messages = await db.ReadFilteredMessagesFromUserAndFollows(username, no);
+            return Ok(messages);
+        }
+        catch (UserDoesntExistException e)
+        {
+            return NotFound("User doesn't exist");
         }
     }
 }
