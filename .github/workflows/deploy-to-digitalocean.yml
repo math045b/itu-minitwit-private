@@ -1,3 +1,7 @@
+#Repo for scp 
+#https://github.com/appleboy/scp-action
+#Repo for SSH
+#https://github.com/appleboy/ssh-action
 name: Deploy to digitalocean.yml
 on:
   workflow_call:
@@ -7,6 +11,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
@@ -15,9 +22,22 @@ jobs:
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
 
-      - name: Deploy to server
-        run: |
-          ssh -t -i ~/.ssh/minitwit_ssh_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST '/minitwit/deploy.sh'
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+      - name: Upload docker-compose.yml to Server
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: 'docker-compose.yml'
+          target: '/minitwit/'
+          overwrite: true
+
+      - name: Deploy Application via SSH
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /minitwit
+            ./deploy.sh
