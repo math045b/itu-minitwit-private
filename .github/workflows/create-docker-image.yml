@@ -41,7 +41,7 @@ jobs:
           context: .
           file: ./Dockerfile-minitwit
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/minitwitweb:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitweb:webbuildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitweb:webbuildcache,mode=max
+          tags: ${{ secrets.DOCKER_USERNAME }}/minitwitimage:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
 
