@@ -27,35 +27,35 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          dotnet restore /Api
+          dotnet restore
         #  dotnet restore /Web
       
       #### Getting timechart with GitScraper image #####
-      #- name: Log in to Docker Hub
-      #  run: |
-      #    echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Log in to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       
       
-      #- name: Pull and run GitScraper container
-      #  run: |
-      #    docker pull rasmusrlarsen/gitscraper:latest
-      #    docker run -d -p 8080:8080 rasmusrlarsen/gitscraper:latest
-      #    sleep 10
+      - name: Pull and run GitScraper container
+        run: |
+          docker pull rasmusrlarsen/gitscraper:latest
+          docker run -d -p 8080:8080 rasmusrlarsen/gitscraper:latest
+          sleep 10
 
-      #- name: Fetch chart
-      #  run: |
-      #    RESPONSE_HEADERS=$(mktemp)
-      #    curl -L -s -o timechart.png -D $RESPONSE_HEADERS \
-      #      -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-      #      "http://localhost:8080/generate-chart?org=ITU-DevOps2025-GROUP-A&repo=itu-minitwit"
+      - name: Fetch chart
+        run: |
+          RESPONSE_HEADERS=$(mktemp)
+          curl -L -s -o timechart.png -D $RESPONSE_HEADERS \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "http://localhost:8080/generate-chart?org=ITU-DevOps2025-GROUP-A&repo=itu-minitwit"
 
-       #   CONTENT_TYPE=$(grep -i "Content-Type:" $RESPONSE_HEADERS | awk '{print $2}' | tr -d '\r')
+          CONTENT_TYPE=$(grep -i "Content-Type:" $RESPONSE_HEADERS | awk '{print $2}' | tr -d '\r')
 
-       #   if [[ "$CONTENT_TYPE" != "image/png" ]]; then
-        #    echo "Error: The response is not an image. Possible API failure."
-         #   cat timechart.png  # Show what was saved for debugging
-         #   exit 1
-         # fi
+          if [[ "$CONTENT_TYPE" != "image/png" ]]; then
+           echo "Error: The response is not an image. Possible API failure."
+            cat timechart.png  # Show what was saved for debugging
+            exit 1
+          fi
         ##### Gotten Chart #####
       
       - name: Get latest tag
@@ -64,8 +64,15 @@ jobs:
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
           echo "Current latest tag is $LATEST_TAG"
       
-      - name: release for all platforms
+      - name: release for all platforms - api
         working-directory: /Api/Api
+        run: |
+          dotnet publish --runtime linux-x64 -p:PublishSingleFile=true --self-contained true
+          dotnet publish --runtime win-x64 -p:PublishSingleFile=true --self-contained true
+          dotnet publish --runtime osx-x64 -p:PublishSingleFile=true --self-contained true
+
+      - name: release for all platforms - web
+        working-directory: /Web/Web
         run: |
           dotnet publish --runtime linux-x64 -p:PublishSingleFile=true --self-contained true
           dotnet publish --runtime win-x64 -p:PublishSingleFile=true --self-contained true
@@ -79,6 +86,13 @@ jobs:
           zip -r api-${{ env.LATEST_TAG }}-win-x64.zip win-x64/publish/Api.exe
           zip -r api-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/Api
 
+      - name: Zip the output
+        working-directory: /Web/Web/bin/Release/net8.0/
+        run: |
+          zip -r web-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/web
+          zip -r web-${{ env.LATEST_TAG }}-win-x64.zip win-x64/publish/web.exe
+          zip -r web-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/web
+
       # Upload the release artifacts and create the release
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
@@ -89,6 +103,9 @@ jobs:
             /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-linux-x64.zip
             /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-win-x64.zip
             /Api/Api/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-osx-x64.zip
-        # timechart.png
+            /Web/Web/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-linux-x64.zip
+            /Web/Web/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-win-x64.zip
+            /Web/Web/bin/Release/net8.0//chirp-${{ env.LATEST_TAG }}-osx-x64.zip
+            timechart.png
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
