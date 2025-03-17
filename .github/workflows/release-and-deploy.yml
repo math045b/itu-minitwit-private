@@ -31,6 +31,10 @@ jobs:
     needs: create-tag
     uses: ./.github/workflows/create-release.yml
 
+  update-release: 
+    if: github.event.pull_request.merged == true
+    needs: create-release
+    uses: ./.github/workflows/append-timechart-to-body.yml
   create-docker-image:
     if: github.event.pull_request.merged == true
     needs: create-tag
