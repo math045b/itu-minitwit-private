@@ -1,7 +1,9 @@
 name: Update Latest Release
 
+permissions: write-all
+
 on:
- workflow_dispatch:
+  workflow_call:
  
 jobs:
   run-gitscraper:
