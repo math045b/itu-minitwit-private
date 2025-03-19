@@ -16,3 +16,7 @@ jobs:
   test:
     needs: build
     uses: ./.github/workflows/test.yml
+    
+  sonarqube-analysis:
+    needs: test
+    uses: ./.github/workflows/sonarqube-analysis.yml
