@@ -31,7 +31,7 @@ public class CreateMessageBase : ComponentBase
 
         var newMessage = new CreateMessageDto
         {
-            Username = "test123", //UserState.Username!,
+            Username = UserState.Username!,
             Content = Message
         };
 
