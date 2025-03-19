@@ -16,7 +16,6 @@ public class MessageRepository(HttpClient httpClient, IConfiguration configurati
     {
         return GetAllAsync<DisplayMessageDto>(Endpoint);
     }
-
     
     public async Task<IEnumerable<DisplayMessageDto>> GetUsersMessages(GetUsersMessageDTO dto)
     {
@@ -43,8 +42,11 @@ public class MessageRepository(HttpClient httpClient, IConfiguration configurati
         return list ?? [];
     }
     
-    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message, string username)
+    public async Task<DisplayMessageDto> CreateMessage(CreateMessageDto message)
     {
-        return CreateAsync<DisplayMessageDto, CreateMessageDto>(Endpoint, username, message);
+        var response = await HttpClient.PostAsJsonAsync($"{ApiBaseUrl}/{Endpoint}/{message.Username}"
+        ,new { message.Content });
+        response.EnsureSuccessStatusCode();
+        return default!;
     }
 }

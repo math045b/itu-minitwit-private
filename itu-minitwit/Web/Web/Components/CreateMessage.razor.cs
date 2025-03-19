@@ -37,7 +37,7 @@ public class CreateMessageBase : ComponentBase
 
         try
         {
-            await MessageService.CreateMessage(newMessage, newMessage.Username);
+            await MessageService.CreateMessage(newMessage);
             
             //Console.WriteLine("Message sent successfully!"); //for debugging
             
