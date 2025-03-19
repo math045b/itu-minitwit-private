@@ -37,3 +37,6 @@ Build then run in the background \
 
 Open a shell in a container \
 `docker exec -it <container-name> sh`
+
+### SonarQube and Code Climate
+https://sonarcloud.io/summary/overall?id=ITU-DevOps2025-GROUP-A_itu-minitwit&branch=main
