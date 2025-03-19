@@ -9,9 +9,10 @@ public class MessageBase : ComponentBase
     [Parameter]
     public DisplayMessageDto MessageDto { get; set; } = new DisplayMessageDto
     {
+        Username = "Mr. Test",
+        Email = "test@test.com",
         Text =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras cursus justo ante, et sollicitudin arcu mollis sit amet. Sed luctus tempor nisi et dignissim. Etia",
-        Username = "Mr. Test",
         PubDate = (int)new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()
     };
 

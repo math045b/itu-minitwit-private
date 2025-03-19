@@ -20,8 +20,12 @@ As a \<who>, I want to \<What>, in order to \<Why>
 \Timespent Xh Ym
 \Time estimated Xh Ym
 
-## Branch named
+## Naming
+### Branch named
 All lowercap with - fx update-readme
+
+### Yaml files
+We end thos in .yml and not .yaml
 
 ## Useful commands
 ### Docker

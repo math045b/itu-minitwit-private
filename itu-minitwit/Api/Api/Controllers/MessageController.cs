@@ -1,6 +1,7 @@
 using Api.Services.Dto_s.MessageDTO_s;
 using Microsoft.AspNetCore.Mvc;
 using Api.Services;
+using Api.Services.Exceptions;
 using Api.Services.Services;
 
 namespace Api.Controllers;
@@ -12,7 +13,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
     [LogMethodParameters]
     [IgnoreAntiforgeryToken]
     [HttpGet("msgs")]
-    public async Task<IActionResult> GetMessages([FromQuery] int? latest)
+    public async Task<IActionResult> GetMessages([FromQuery] int? latest, [FromQuery] int no = 100)
     {
         try
         {
@@ -34,7 +35,7 @@ public class MessageController(IMessageService db, ILatestService latestService,
     [LogMethodParameters]
     [IgnoreAntiforgeryToken]
     [HttpGet("msgs/{username}")]
-    public async Task<IActionResult> GetFilteredMessages(string username, [FromQuery] int? latest)
+    public async Task<IActionResult> GetFilteredMessages(string username, [FromQuery] int? latest, [FromQuery] int no = 100)
     {
         try
         {
@@ -52,9 +53,9 @@ public class MessageController(IMessageService db, ILatestService latestService,
             logger.LogInformation($"Last message: {filteredMessages.Last()}");
             return Ok(filteredMessages);
         }
-        catch (KeyNotFoundException e)
+        catch (UserDoesntExistException e)
         {
-            logger.LogError(e, "Couldn't find key");
+            logger.LogError(e, $"Couldn't find user: {username}");
             return NotFound(new { message = e.Message });
         }
         catch (Exception e)
@@ -87,6 +88,20 @@ public class MessageController(IMessageService db, ILatestService latestService,
         {
             logger.LogError(e, "An error occured, that we did have not accounted for");
             return StatusCode(500, "An error occured, that we did not for see");
+        }
+    }
+
+    [HttpGet("msgs/fllws/{username}")]
+    public async Task<IActionResult> GetFilteredMessagesForUserAndFollows(string username, [FromQuery] int no = 100)
+    {
+        try
+        {
+            var messages = await db.ReadFilteredMessagesFromUserAndFollows(username, no);
+            return Ok(messages);
+        }
+        catch (UserDoesntExistException)
+        {
+            return NotFound("User doesn't exist");
         }
     }
 }

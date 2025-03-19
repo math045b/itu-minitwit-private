@@ -1,0 +1,43 @@
+name: Update Latest Release
+
+permissions: write-all
+
+on:
+  workflow_call:
+ 
+jobs:
+  run-gitscraper:
+    runs-on: ubuntu-latest
+    permissions: 
+     contents: write
+     actions: read
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+      
+      - name: Get latest tag
+        run: |
+          RELEASE_TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")  # Get latest tag or default to v0.0.0
+          echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
+          echo "Current latest tag is $RELEASE_TAG" 
+      
+      - name: Extract Image URL & Update Release
+        run: |
+          RELEASE_DATA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ env.RELEASE_TAG }}")
+          RELEASE_ID=$(echo "$RELEASE_DATA" | jq -r '.id')
+          IMAGE_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[] | select(.name=="timechart.png") | .browser_download_url')
+      
+          if [[ -z "$IMAGE_URL" || "$IMAGE_URL" == "null" ]]; then
+            echo "Error: Could not retrieve image URL"
+            exit 1
+          fi
+      
+          UPDATED_BODY="### Timechart Report\n\n![Timechart]($IMAGE_URL)"
+          
+          curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": \"$UPDATED_BODY\"}" \
+            "https://api.github.com/repos/RasmusLarsen02/GitScraper/releases/$RELEASE_ID"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

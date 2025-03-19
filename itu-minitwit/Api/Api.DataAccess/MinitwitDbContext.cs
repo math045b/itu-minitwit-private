@@ -24,11 +24,8 @@ public partial class MinitwitDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<LatestProcessedSimAction>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-        });
-        
+        modelBuilder.Entity<LatestProcessedSimAction>(entity => { entity.HasKey(e => e.Id); });
+
         modelBuilder.Entity<Follower>(entity =>
         {
             entity.HasKey(e => new { e.WhoId, e.WhomId });
@@ -42,6 +39,11 @@ public partial class MinitwitDbContext : DbContext
         modelBuilder.Entity<Message>(entity =>
         {
             entity.ToTable("message");
+
+            entity
+                .HasOne(m => m.Author)
+                .WithMany(u => u.Messages)
+                .HasForeignKey(m => m.AuthorId);
 
             entity.Property(e => e.MessageId).HasColumnName("message_id");
             entity.Property(e => e.AuthorId).HasColumnName("author_id");

@@ -5,6 +5,7 @@ namespace Web.Services;
 public interface IMessageRepository
 {
     public Task<IEnumerable<DisplayMessageDto>> GetMessages();
-    
-    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message, string Username);
+    public Task<DisplayMessageDto> CreateMessage(CreateMessageDto message, string username);
+    public Task<IEnumerable<DisplayMessageDto>> GetUsersMessages(GetUsersMessageDTO dto);
+    public Task<IEnumerable<DisplayMessageDto>> GetUserAndFollowsMessages(GetUsersMessageDTO dto);
 }

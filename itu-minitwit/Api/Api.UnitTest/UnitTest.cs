@@ -52,12 +52,14 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
     [Fact]
     public async Task GetMessages_Returns_Messages()
     {
+        fixture.ResetDB();
         var context = fixture.GetDbContext();
         var user = new User { Username = "test2", Email = "test@test.com", PwHash = "23456" };
         var msg = new Message
             { AuthorId = 1, Text = "Hello from test", PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds() };
 
-        await context.Users.AddAsync(user);
+        await context.Users.AddAsync(user); 
+        await context.SaveChangesAsync();
         await context.Messages.AddAsync(msg);
         await context.SaveChangesAsync();
 
@@ -75,10 +77,12 @@ public class UnitTest(InMemoryWebApplicationFactory fixture) : IClassFixture<InM
         var context = fixture.GetDbContext();
         var user = new User { Username = "Man", Email = "Man@Man.com", PwHash = "23456" };
     
-        var msg = new Message { AuthorId = user.UserId, Text = "Hello from Man", PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds() };
-        var msg2 = new Message { AuthorId = user.UserId, Text = "Hello again from Man", PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds() };
+        var msg = new Message { AuthorId = 1, Text = "Hello from Man", PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds() };
+        var msg2 = new Message { AuthorId = 1, Text = "Hello again from Man", PubDate = (int)DateTimeOffset.Now.ToUnixTimeSeconds() };
 
         await context.Users.AddAsync(user);
+        await context.SaveChangesAsync();
+        
         await context.Messages.AddAsync(msg);
         await context.Messages.AddAsync(msg2);
 
