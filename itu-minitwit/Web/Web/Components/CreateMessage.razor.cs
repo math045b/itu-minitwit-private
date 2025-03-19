@@ -37,13 +37,18 @@ public class CreateMessageBase : ComponentBase
 
         try
         {
-            await MessageService.CreateMessage(newMessage);
-            
-            //Console.WriteLine("Message sent successfully!"); //for debugging
-            
-            Message = ""; // Clear input field after sending
-            await Task.Delay(300);
-            Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+            if (await MessageService.CreateMessage(newMessage))
+            {
+
+                Message = ""; // Clear input field after sending
+                //await Task.Delay(300);
+                Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+            }
+            else
+            {
+                StatusMessage = "Message failed to send, try agian later";
+                return;
+            }
         }
         catch (HttpRequestException httpEx)
         {
