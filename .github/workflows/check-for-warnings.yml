@@ -13,6 +13,7 @@ jobs:
       matrix:
         project:
           - Api/Api
+          - Web/Web
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
