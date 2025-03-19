@@ -42,11 +42,10 @@ public class MessageRepository(HttpClient httpClient, IConfiguration configurati
         return list ?? [];
     }
     
-    public async Task<DisplayMessageDto> CreateMessage(CreateMessageDto message)
+    public async Task<bool> CreateMessage(CreateMessageDto message)
     {
         var response = await HttpClient.PostAsJsonAsync($"{ApiBaseUrl}/{Endpoint}/{message.Username}"
         ,new { message.Content });
-        response.EnsureSuccessStatusCode();
-        return default!;
+        return response.EnsureSuccessStatusCode().IsSuccessStatusCode;
     }
 }
