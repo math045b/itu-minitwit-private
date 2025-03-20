@@ -20,3 +20,4 @@ jobs:
   sonarqube-analysis:
     needs: test
     uses: ./.github/workflows/sonarqube-analysis.yml
+    secrets: inherit
