@@ -1,11 +1,13 @@
 name: SonarQube
 on:
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
 jobs:
   build:
     name: Build and analyze
     runs-on: windows-latest
-    secrets: inherit
     steps:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
