@@ -41,7 +41,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          $ErrorActionPreference = 'Stop'
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"ITU-DevOps2025-GROUP-A_itu-minitwit" /o:"itu-devops2025-group-a" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build itu-minitwit/itu-minitwit.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
