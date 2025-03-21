@@ -1,0 +1,59 @@
+name: Run Simulation
+
+on:
+    workflow_call:
+
+jobs:
+  run-simulation:
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+            working-directory: itu-minitwit/Api/Api
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x' 
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests    
+
+    - name: Restore .NET dependencies
+      run: dotnet restore
+
+    - name: Build .NET project
+      run: dotnet build --no-restore
+    
+    - name: Create data directory
+      run: mkdir -p data    
+
+    - name: Start API
+      run: |
+        nohup dotnet run &
+        sleep 10  # Wait for the API to star 
+    
+    - name: Run Python simulation
+      run: |
+        set -o pipefail
+        python minitwit_simulator.py "http://localhost:5000/api" 2>&1 | tee simulation_output.log
+  
+    - name: Check for simulation output
+      run: |
+        if [ -s simulation_output.log ]; then
+          echo "Simulation script produced output:"
+          cat simulation_output.log
+          exit 1
+        else
+          echo "Simulation script produced no output."
+        fi
