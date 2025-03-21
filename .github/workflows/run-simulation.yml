@@ -40,13 +40,13 @@ jobs:
 
     - name: Start API
       run: |
-        nohup dotnet run --urls "http://localhost:5001" &
+        nohup dotnet run &
         sleep 10  # Wait for the API to star 
     
     - name: Run Python simulation
       run: |
         set -o pipefail
-        python minitwit_simulator.py "http://localhost:5001" 2>&1 | tee simulation_output.log
+        python minitwit_simulator.py "http://localhost:5000" 2>&1 | tee simulation_output.log
   
     - name: Check for simulation output
       run: |
