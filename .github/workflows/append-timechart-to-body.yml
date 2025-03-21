@@ -4,6 +4,13 @@ permissions: write-all
 
 on:
   workflow_call:
+    secrets:
+        DOCKER_PASSWORD:
+          required: true
+        DOCKER_USERNAME:
+          required: true
+        GITHUB_TOKEN:
+          required: true
  
 jobs:
   run-gitscraper:
