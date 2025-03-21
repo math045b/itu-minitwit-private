@@ -29,6 +29,13 @@ public class CreateMessageBase : ComponentBase
             return;
         }
 
+        if (Message.Length > 160)
+        {
+            StatusMessage = "Message cannot be more than 160 characters.";
+            Console.WriteLine("Message cannot be more than 160 characters.");
+            return;
+        }
+
         var newMessage = new CreateMessageDto
         {
             Username = UserState.Username!,
