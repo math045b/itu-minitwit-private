@@ -1,6 +1,11 @@
 name: Create docker image
 on:
   workflow_call:
+    secrets:
+      DOCKER_PASSWORD:
+        required: true
+      DOCKER_USERNAME:
+        required: true
   workflow_dispatch:
 
 jobs:

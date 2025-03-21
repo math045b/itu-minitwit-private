@@ -30,18 +30,22 @@ jobs:
     if: github.event.pull_request.merged == true
     needs: create-tag
     uses: ./.github/workflows/create-release.yml
+    secrets: inherit 
 
   update-release: 
     if: github.event.pull_request.merged == true
     needs: create-release
     uses: ./.github/workflows/append-timechart-to-body.yml
+    secrets: inherit 
     
   create-docker-image:
     if: github.event.pull_request.merged == true
     needs: create-tag
     uses: ./.github/workflows/create-docker-image.yml
+    secrets: inherit 
 
   deploy-to-digitalocean:
     if: github.event.pull_request.merged == true
     needs: create-docker-image
     uses: ./.github/workflows/deploy-to-digitalocean.yml
+    secrets: inherit
