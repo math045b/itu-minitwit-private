@@ -14,7 +14,7 @@ import socket
 import base64
 import requests
 from time import sleep
-from datetime import datetime
+from datetime import datetime, timezone
 from contextlib import closing
 import sqlite3
 
@@ -323,21 +323,21 @@ def main(host):
                 )
 
         except requests.exceptions.ConnectionError as e:
-            ts_str = datetime.strftime(datetime.utcnow(), "%Y-%m-%d %H:%M:%S")
+            ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             print(
                 ",".join(
                     [ts_str, host, str(action["latest"]), "ConnectionError"]
                 )
             )
         except requests.exceptions.ReadTimeout as e:
-            ts_str = datetime.strftime(datetime.utcnow(), "%Y-%m-%d %H:%M:%S")
+            ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             print(
                 ",".join([ts_str, host, str(action["latest"]), "ReadTimeout"])
             )
         except Exception as e:
             print("========================================")
             print(traceback.format_exc())
-            ts_str = datetime.strftime(datetime.utcnow(), "%Y-%m-%d %H:%M:%S")
+            ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             print(
                 ",".join(
                     [ts_str, host, str(action["latest"]), type(e).__name__]
