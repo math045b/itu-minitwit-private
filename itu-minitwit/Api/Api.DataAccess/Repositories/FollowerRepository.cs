@@ -68,7 +68,9 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
     [LogReturnValueAsync]
     public async Task<IEnumerable<string>> GetFollows(string username, int no = 100)
     {
-        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var user = await dbContext.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Username == username);
 
         if (user == null)
         {
@@ -78,6 +80,7 @@ public class FollowRepository(MinitwitDbContext dbContext, ILogger<FollowReposit
         }
 
         var followsList = await dbContext.Followers
+            .AsNoTracking()
             .Where(f => f.WhoId == user.UserId)
             .Join(dbContext.Users,
                 f => f.WhomId,

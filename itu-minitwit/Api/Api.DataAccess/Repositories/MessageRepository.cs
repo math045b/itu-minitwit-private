@@ -16,6 +16,7 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
         if(!await dbContext.Messages.AnyAsync()) return Enumerable.Empty<DisplayMessageDTO>().ToList();
         
         return await dbContext.Messages
+            .AsNoTracking()
             .OrderByDescending(m => m.PubDate)
             .Take(100)
             .Include(m => m.Author)
@@ -43,6 +44,7 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
         if(!await dbContext.Messages.AnyAsync()) return Enumerable.Empty<DisplayMessageDTO>().ToList();
 
         return await dbContext.Messages
+            .AsNoTracking()
             .Where(m => m.AuthorId == user.UserId && m.Flagged == 0)
             .OrderByDescending(m => m.PubDate)
             .Take(pagesize)
@@ -65,6 +67,7 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
         if(!await dbContext.Messages.AnyAsync()) return Enumerable.Empty<DisplayMessageDTO>().ToList();
         
         return await dbContext.Messages
+            .AsNoTracking()
             .Where(m => m.Flagged == 0 &&
                         (m.AuthorId == user.UserId ||
                          dbContext.Followers.Any(f => f.WhoId == user.UserId && f.WhomId == m.AuthorId)))

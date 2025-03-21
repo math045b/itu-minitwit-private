@@ -10,7 +10,9 @@ public class LatestRepository(MinitwitDbContext dbContext) : ILatestRepository
     [LogReturnValue]
     public async Task<int> GetLatest()
     {
-        var latestProcessedCommandId = await dbContext.LatestProcessedSimActions.FirstOrDefaultAsync();
+        var latestProcessedCommandId = await dbContext.LatestProcessedSimActions
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
         if (latestProcessedCommandId == null) return -1;
         return latestProcessedCommandId.Latest;
     }
