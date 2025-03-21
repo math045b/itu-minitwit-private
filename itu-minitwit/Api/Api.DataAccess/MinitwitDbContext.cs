@@ -34,6 +34,9 @@ public partial class MinitwitDbContext : DbContext
 
             entity.Property(e => e.WhoId).HasColumnName("who_id");
             entity.Property(e => e.WhomId).HasColumnName("whom_id");
+            
+            entity.HasIndex(e => new { e.WhoId, e.WhomId })
+                  .IsUnique();
         });
 
         modelBuilder.Entity<Message>(entity =>
@@ -52,6 +55,9 @@ public partial class MinitwitDbContext : DbContext
             entity.Property(e => e.Text)
                 .HasColumnType("string")
                 .HasColumnName("text");
+
+            entity.HasIndex(e => new { e.AuthorId, e.Flagged, e.PubDate })
+                  .IsDescending(false, false, true);
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -71,9 +77,5 @@ public partial class MinitwitDbContext : DbContext
                 .HasColumnType("string")
                 .HasColumnName("username");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
