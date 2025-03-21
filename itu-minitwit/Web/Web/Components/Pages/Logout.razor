@@ -7,9 +7,9 @@
     [Inject] protected NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private UserState UserState { get; set; } = null!;
     
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         UserState.ClearUser();
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/", forceLoad: true);
     }
 }
