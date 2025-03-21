@@ -46,9 +46,7 @@ public class CreateMessageBase : ComponentBase
         {
             if (await MessageService.CreateMessage(newMessage))
             {
-
-                Message = ""; // Clear input field after sending
-                //await Task.Delay(300);
+                Message = "";
                 Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
             }
             else
