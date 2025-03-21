@@ -1,13 +1,13 @@
 ﻿@page "/"
 @inherits PublicTimelineBase
 @attribute [StreamRendering]
+@rendermode InteractiveServer
+
 <h3>PublicTimeline</h3>
+
+<CreateMessage></CreateMessage>
 
 @if (Messages != null)
 {
     <MessageView Messages="Messages"></MessageView>
-}
-
-@code {
-    
 }

@@ -10,13 +10,12 @@ namespace Web.DataAccess;
 public class MessageRepository(HttpClient httpClient, IConfiguration configuration) : 
     BaseAPIRepository(httpClient, configuration), IMessageRepository
 {
-    private string Endpoint { get; } = "/msgs";
+    private string Endpoint { get; } = "msgs";
 
     public Task<IEnumerable<DisplayMessageDto>> GetMessages()
     {
         return GetAllAsync<DisplayMessageDto>(Endpoint);
     }
-
     
     public async Task<IEnumerable<DisplayMessageDto>> GetUsersMessages(GetUsersMessageDTO dto)
     {
@@ -43,8 +42,10 @@ public class MessageRepository(HttpClient httpClient, IConfiguration configurati
         return list ?? [];
     }
     
-    // public Task<bool> PostMessageAsync(DisplayMessageDto message)
-    // {
-    //     return CreateAsync<DisplayMessageDto,>()
-    // }
+    public async Task<bool> CreateMessage(CreateMessageDto message)
+    {
+        var response = await HttpClient.PostAsJsonAsync($"{ApiBaseUrl}/{Endpoint}/{message.Username}"
+        ,new { message.Content });
+        return response.EnsureSuccessStatusCode().IsSuccessStatusCode;
+    }
 }

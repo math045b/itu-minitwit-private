@@ -10,16 +10,6 @@ public class DisplayMessageDto
     public required string Text { get; set; }
     public int PubDate { get; set; }
 
-    public DisplayMessageDto()
-    {
-        
-    }
-    
-
-    //{"Username":"test123","Text":"this is a test","PubDate":1741947254,"$type":"DisplayMessageDTO"}
-    
-    
-    
     public string GetGravatarUrl(int size = 150)
     {
         var hash = MD5.HashData(Encoding.UTF8.GetBytes(Email.Trim().ToLower()));

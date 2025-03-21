@@ -1,0 +1,35 @@
+@inherits CreateMessageBase
+@rendermode InteractiveServer
+
+@if (UserState.IsLoggedIn)
+{
+    <div class="card shadow-sm w-100" style="max-width: 100%; max-height: 75%; margin: 20px auto;">
+        <div class="card-header">
+            <h5 class="mb-0"> @UserState.Username </h5>
+        </div>
+        <div class="card-body">
+            <label for="message" class="form-label">Your Message</label>
+            <textarea
+            id="message"
+            @bind="Message"
+            @oninput="OnInputHandler"
+            rows="4"
+            class="form-control"
+            placeholder="Write your message here..."
+        ></textarea>
+            <div class="form-text text-end">@($"{160 - Message.Length} characters remaining")</div>
+        </div>
+
+        <div class="card-footer text-end">
+            <button class="btn btn-primary" @onclick="PostMessage">Send</button>
+        </div>
+
+        <!-- Show feedback message -->
+        @if (!string.IsNullOrEmpty(StatusMessage))
+        {
+            <div class="alert @(!StatusMessage.StartsWith("Error") ? "alert-success" : "alert-danger") mt-3">
+                @StatusMessage
+            </div>
+        }
+    </div>
+}
