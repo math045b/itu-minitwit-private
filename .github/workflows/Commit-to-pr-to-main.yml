@@ -16,3 +16,7 @@ jobs:
   test:
     needs: build
     uses: ./.github/workflows/test.yml
+
+  simulation:
+    needs: test
+    uses: ./.github/workflows/run-simulation.yml
