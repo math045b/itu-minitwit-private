@@ -11,14 +11,14 @@ namespace Api.DataAccess.Repositories;
 public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepository> logger) : IMessageRepository
 {
     [LogMethodParameters]
-    public async Task<List<DisplayMessageDTO>> ReadMessages()
+    public async Task<List<DisplayMessageDTO>> ReadMessages(int pagesize)
     {
         if(!await dbContext.Messages.AnyAsync()) return Enumerable.Empty<DisplayMessageDTO>().ToList();
         
         return await dbContext.Messages
             .AsNoTracking()
             .OrderByDescending(m => m.PubDate)
-            .Take(100)
+            .Take(pagesize)
             .Select(m => new DisplayMessageDTO
             {
                 Username = m.Author!.Username,
