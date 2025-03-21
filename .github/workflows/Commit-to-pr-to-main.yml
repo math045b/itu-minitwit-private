@@ -20,3 +20,8 @@ jobs:
   simulation:
     needs: test
     uses: ./.github/workflows/run-simulation.yml
+    
+  sonarqube-analysis:
+    needs: test
+    uses: ./.github/workflows/sonarqube-analysis.yml
+    secrets: inherit
