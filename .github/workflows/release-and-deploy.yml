@@ -48,3 +48,4 @@ jobs:
     if: github.event.pull_request.merged == true
     needs: create-docker-image
     uses: ./.github/workflows/deploy-to-digitalocean.yml
+    secrets: inherit
