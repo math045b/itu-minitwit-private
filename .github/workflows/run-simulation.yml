@@ -46,7 +46,7 @@ jobs:
     - name: Run Python simulation
       run: |
         set -o pipefail
-        python minitwit_simulator.py "http://localhost:5000" 2>&1 | tee simulation_output.log
+        python minitwit_simulator.py "http://localhost:5000/api" 2>&1 | tee simulation_output.log
   
     - name: Check for simulation output
       run: |
