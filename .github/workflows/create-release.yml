@@ -70,14 +70,14 @@ jobs:
           echo "Current latest tag is $LATEST_TAG"
       
       - name: release for all platforms - api
-        working-directory: Api/Api
+        working-directory: Api/Api/
         run: |
           dotnet publish --runtime linux-x64 -p:PublishSingleFile=true --self-contained true
           dotnet publish --runtime win-x64 -p:PublishSingleFile=true --self-contained true
           dotnet publish --runtime osx-x64 -p:PublishSingleFile=true --self-contained true
 
       - name: release for all platforms - web
-        working-directory: Web/Web
+        working-directory: Web/Web/
         run: |
           dotnet publish --runtime linux-x64 -p:PublishSingleFile=true --self-contained true
           dotnet publish --runtime win-x64 -p:PublishSingleFile=true --self-contained true
