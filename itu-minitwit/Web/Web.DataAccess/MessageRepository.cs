@@ -19,13 +19,13 @@ public class MessageRepository(HttpClient httpClient, IConfiguration configurati
     
     public async Task<IEnumerable<DisplayMessageDto>> GetUsersMessages(GetUsersMessageDTO dto)
     {
-        var endpoint = $"{ApiBaseUrl}{Endpoint}/{dto.Username}";
+        var endpoint = $"{ApiBaseUrl}/{Endpoint}/{dto.Username}";
         return await GetMessagesAsync(endpoint, dto.NumberOfMessages);
     }
 
     public async Task<IEnumerable<DisplayMessageDto>> GetUserAndFollowsMessages(GetUsersMessageDTO dto)
     {
-        var endpoint = $"{ApiBaseUrl}{Endpoint}/fllws/{dto.Username}";
+        var endpoint = $"{ApiBaseUrl}/{Endpoint}/fllws/{dto.Username}";
         return await GetMessagesAsync(endpoint, dto.NumberOfMessages);
     }
 
