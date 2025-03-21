@@ -9,8 +9,6 @@ on:
           required: true
         DOCKER_USERNAME:
           required: true
-        GITHUB_TOKEN:
-          required: true
  
 jobs:
   run-gitscraper:
