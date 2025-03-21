@@ -29,16 +29,16 @@ public partial class Register : ComponentBase
             Pwd = RegisterModel.Password
         };
         
-        var (Success, Error) = await UserService.Register(registerRequest);
+        var (success, error) = await UserService.Register(registerRequest);
 
-        if (Success)
+        if (success)
         {
             UserState.SetUser(RegisterModel.Username);
             Navigation.NavigateTo("/");
         }
         else
         {
-            ErrorMessage = Error;
+            ErrorMessage = error;
         }
     }
 }
