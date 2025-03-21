@@ -5,6 +5,13 @@
 name: Deploy to digitalocean.yml
 on:
   workflow_call:
+    secrets:
+        SSH_HOST:
+          required: true
+        SSH_USER:
+          required: true
+        SSH_KEY:
+          required: true
   workflow_dispatch:
 
 jobs:
