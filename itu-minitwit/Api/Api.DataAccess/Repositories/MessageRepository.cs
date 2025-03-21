@@ -19,7 +19,6 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
             .AsNoTracking()
             .OrderByDescending(m => m.PubDate)
             .Take(100)
-            .Include(m => m.Author)
             .Select(m => new DisplayMessageDTO
             {
                 Username = m.Author!.Username,
@@ -48,7 +47,6 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
             .Where(m => m.AuthorId == user.UserId && m.Flagged == 0)
             .OrderByDescending(m => m.PubDate)
             .Take(pagesize)
-            .Include(m => m.Author)
             .Select(m => new DisplayMessageDTO
             {
                 Username = m.Author!.Username,
@@ -73,7 +71,6 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
                          dbContext.Followers.Any(f => f.WhoId == user.UserId && f.WhomId == m.AuthorId)))
             .OrderByDescending(m => m.PubDate)
             .Take(pagesize)
-            .Include(m => m.Author)
             .Select(m => new DisplayMessageDTO
             {
                 Username = m.Author!.Username,
