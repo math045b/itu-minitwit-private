@@ -11,14 +11,14 @@ namespace Api.DataAccess.Repositories;
 public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepository> logger) : IMessageRepository
 {
     [LogMethodParameters]
-    public async Task<List<DisplayMessageDTO>> ReadMessages()
+    public async Task<List<DisplayMessageDTO>> ReadMessages(int pagesize)
     {
         if(!await dbContext.Messages.AnyAsync()) return Enumerable.Empty<DisplayMessageDTO>().ToList();
         
         return await dbContext.Messages
+            .AsNoTracking()
             .OrderByDescending(m => m.PubDate)
-            .Take(100)
-            .Include(m => m.Author)
+            .Take(pagesize)
             .Select(m => new DisplayMessageDTO
             {
                 Username = m.Author!.Username,
@@ -43,10 +43,10 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
         if(!await dbContext.Messages.AnyAsync()) return Enumerable.Empty<DisplayMessageDTO>().ToList();
 
         return await dbContext.Messages
+            .AsNoTracking()
             .Where(m => m.AuthorId == user.UserId && m.Flagged == 0)
             .OrderByDescending(m => m.PubDate)
             .Take(pagesize)
-            .Include(m => m.Author)
             .Select(m => new DisplayMessageDTO
             {
                 Username = m.Author!.Username,
@@ -65,12 +65,12 @@ public class MessageRepository(MinitwitDbContext dbContext, ILogger<MessageRepos
         if(!await dbContext.Messages.AnyAsync()) return Enumerable.Empty<DisplayMessageDTO>().ToList();
         
         return await dbContext.Messages
+            .AsNoTracking()
             .Where(m => m.Flagged == 0 &&
                         (m.AuthorId == user.UserId ||
                          dbContext.Followers.Any(f => f.WhoId == user.UserId && f.WhomId == m.AuthorId)))
             .OrderByDescending(m => m.PubDate)
             .Take(pagesize)
-            .Include(m => m.Author)
             .Select(m => new DisplayMessageDTO
             {
                 Username = m.Author!.Username,

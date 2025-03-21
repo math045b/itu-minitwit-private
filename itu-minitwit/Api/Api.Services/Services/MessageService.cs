@@ -5,7 +5,7 @@ namespace Api.Services.Services;
 
 public interface IMessageService
 {
-    public Task<List<DisplayMessageDTO>> ReadMessages();
+    public Task<List<DisplayMessageDTO>> ReadMessages(int pagesize);
     public Task<List<DisplayMessageDTO>> ReadFilteredMessages(string username, int pagesize);
     public Task<List<DisplayMessageDTO>> ReadFilteredMessagesFromUserAndFollows(string username, int pagesize);
 
@@ -15,9 +15,9 @@ public interface IMessageService
 public class MessageService(IMessageRepository repository) : IMessageService
 {
     [LogMethodParameters]
-    public Task<List<DisplayMessageDTO>> ReadMessages()
+    public Task<List<DisplayMessageDTO>> ReadMessages(int pagesize)
     {
-        return repository.ReadMessages();
+        return repository.ReadMessages(pagesize);
     }
     
     [LogMethodParameters]
