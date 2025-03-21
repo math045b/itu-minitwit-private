@@ -14,6 +14,10 @@ public class CreateMessageBase : ComponentBase
     [Parameter] public required string Username { get; set; } // Parent sets this
     protected string Message { get; set; } = "";
     protected string StatusMessage { get; set; } = "";
+    private async void StateHasChangedHandler()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
     
     protected void OnInputHandler(ChangeEventArgs e)
     {
