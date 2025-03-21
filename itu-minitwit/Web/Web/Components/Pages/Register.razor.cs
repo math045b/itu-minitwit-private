@@ -10,13 +10,13 @@ public partial class Register : ComponentBase
     [SupplyParameterFromForm(FormName = "Register")]
     protected RegisterModel RegisterModel { get; set; } = new();
 
-    protected string ErrorMessage;
+    protected string? ErrorMessage;
 
-    [Inject] protected IUserService UserService { get; set; }
+    [Inject] protected IUserService UserService { get; set; } = null!;
 
-    [Inject] protected UserState UserState { get; set; }
+    [Inject] protected UserState UserState { get; set; } = null!;
 
-    [Inject] protected NavigationManager Navigation { get; set; }
+    [Inject] protected NavigationManager Navigation { get; set; } = null!;
 
     protected async Task HandleValidSubmit()
     {
@@ -45,12 +45,12 @@ public partial class Register : ComponentBase
 
 public class RegisterModel
 {
-    [Required] public string Username { get; set; }
+    [Required] public string Username { get; set; } = null!;
 
-    [Required, EmailAddress] public string Email { get; set; }
+    [Required, EmailAddress] public string Email { get; set; } = null!;
 
-    [Required, MinLength(1)] public string Password { get; set; }
+    [Required, MinLength(1)] public string Password { get; set; } = null!;
 
     [Required, Compare("Password", ErrorMessage = "Passwords do not match")]
-    public string ConfirmPassword { get; set; }
+    public string ConfirmPassword { get; set; } = null!;
 }
