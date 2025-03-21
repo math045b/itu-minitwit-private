@@ -21,7 +21,7 @@ public class FollowerController(IFollowService followService, ILatestService lat
             await latestService.UpdateLatest(latest);
             logger.LogInformation($"Updating latest: {latest?.ToString() ?? "null"}");
         
-            if (followDto.Follow != null)
+            if (!String.IsNullOrWhiteSpace(followDto.Follow))
             {
                 if (username == followDto.Follow)
                 {
@@ -31,7 +31,7 @@ public class FollowerController(IFollowService followService, ILatestService lat
                 
                 return await Follow(username, followDto.Follow);
             }
-            if (followDto.Unfollow != null)
+            if (!String.IsNullOrWhiteSpace(followDto.Unfollow))
             {
                 if (username == followDto.Unfollow)
                 {
