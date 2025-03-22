@@ -70,7 +70,14 @@ jobs:
           LATEST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")  # Get latest tag or default to v0.0.0
           echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
           echo "Current latest tag is $LATEST_TAG"
-      
+
+      - name: List directory structure - before
+        run: ls -R
+
+      - name: List directory structure - after
+        working-directory: Api/Api/
+        run: ls -R
+  
       - name: release for all platforms - api
         working-directory: Api/Api/
         run: |
