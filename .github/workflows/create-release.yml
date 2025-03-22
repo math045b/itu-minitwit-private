@@ -13,9 +13,6 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-#    defaults:
-#      run:
-#        working-directory: itu-minitwit/
     permissions:
       contents: write
       actions: read
@@ -62,12 +59,6 @@ jobs:
 #            cat timechart.png
 #            exit 1
 #          fi
-
-      - name: List directory structure
-        run: ls -R
-
-      - name: dir
-        run: pwd
         
       - name: Get latest tag
         run: |
@@ -92,25 +83,16 @@ jobs:
 
       - name: Zip the output - api
         run: |
-          zip -r api-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/Api
-          zip -r api-${{ env.LATEST_TAG }}-win-x64.zip win-x64/publish/Api.exe
-          zip -r api-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/Api
+          zip -r api-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/
+          zip -r api-${{ env.LATEST_TAG }}-win-x64.zip win-x64/publish/
+          zip -r api-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/
         working-directory: itu-minitwit/Api/Api/bin/Release/net8.0/
-
-      - name: List contents of publish folder
-        run: |
-          ls -R itu-minitwit/Web/Web/bin/Release/net8.0/linux-x64/publish/
-
-      - name: List contents of publish folder
-        working-directory: itu-minitwit/Web/Web/bin/Release/net8.0/
-        run: |
-          ls -R linux-x64/publish/
 
       - name: Zip the output - web
         run: |
-          zip -r web-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/Web
-          zip -r web-${{ env.LATEST_TAG }}-win-x64.zip win-x64/publish/Web.exe
-          zip -r web-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/Web
+          zip -r web-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/
+          zip -r web-${{ env.LATEST_TAG }}-win-x64.zip win-x64/publish/
+          zip -r web-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/
         working-directory: itu-minitwit/Web/Web/bin/Release/net8.0/
 
       - name: Create GitHub release
