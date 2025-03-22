@@ -106,15 +106,6 @@ jobs:
         run: |
           ls -R linux-x64/publish/
 
-      - name: List contents of publish folder web
-        run: |
-          ls -R itu-minitwit/Web/Web/bin/Release/net8.0/linux-x64/publish/web
-
-      - name: List contents of publish folder web
-        working-directory: itu-minitwit/Web/Web/bin/Release/net8.0/
-        run: |
-          ls -R linux-x64/publish/web
-
       - name: Zip the output - web
         run: |
           zip -r web-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/web
