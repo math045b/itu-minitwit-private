@@ -99,7 +99,7 @@ jobs:
 
       - name: List contents of publish folder
         run: |
-          ls -R Web/Web/bin/Release/net8.0/linux-x64/publish/
+          ls -R itu-minitwit/Web/Web/bin/Release/net8.0/linux-x64/publish/
 
       - name: List contents of publish folder
         run: |
