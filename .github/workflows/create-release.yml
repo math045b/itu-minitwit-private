@@ -97,9 +97,17 @@ jobs:
           zip -r api-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/Api
         working-directory: itu-minitwit/Api/Api/bin/Release/net8.0/
 
+      - name: List contents of publish folder
+        run: |
+          ls -R Web/Web/bin/Release/net8.0/linux-x64/publish/
+
+      - name: List contents of publish folder
+        run: |
+          ls -R zip -r web-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/
+
       - name: Zip the output - web
         run: |
-          zip -r web-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/web
+          zip -r web-${{ env.LATEST_TAG }}-linux-x64.zip linux-x64/publish/
           zip -r web-${{ env.LATEST_TAG }}-win-x64.zip win-x64/publish/web.exe
           zip -r web-${{ env.LATEST_TAG }}-osx-x64.zip osx-x64/publish/web
         working-directory: itu-minitwit/Web/Web/bin/Release/net8.0/
